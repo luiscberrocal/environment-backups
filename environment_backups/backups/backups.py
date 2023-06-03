@@ -5,6 +5,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
+from pyzipper import AESZipFile, ZIP_DEFLATED, WZ_AES
+
 from environment_backups._legacy.pretty_print import print_success
 
 
@@ -38,36 +40,38 @@ def zip_folder(zip_file: Path, folder_to_zip: Path):
         zipdir(folder_to_zip, zipf)
 
 
+def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
+    def zipdir(path, ziph):
+        # ziph is zipfile handle
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                ziph.write(os.path.join(root, file),
+                           os.path.relpath(os.path.join(root, file),
+                                           os.path.join(path, '..')))
+
+    if password is None:
+        encryption = None
+    else:
+        encryption = WZ_AES
+    with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption) as zf:
+        if password is not None:
+            pwd = password.encode('utf-8')
+            zf.setpassword(pwd)
+        else:
+            zf.setpassword(None)
+        zipdir(folder_to_zip, zf)
+
+
 def backup_envs(project_folder: Path, backup_folder: Path,
                 environment_folders: List[str],
                 date_format='%Y%m%d_%H', ) -> Tuple[List[Path], Path]:
-
     project_envs_dict = get_projects_envs(project_folder, environment_folders)
     timestamp = datetime.now().strftime(date_format)
     b_folder = backup_folder / timestamp
     b_folder.mkdir(exist_ok=True)
-    zip_list = list()
+    zip_list = []
     for project, v in project_envs_dict.items():
         zip_file = b_folder / f'{project}.zip'
-        zip_folder(zip_file, v['envs'])
+        zip_folder_with_pwd(zip_file, v['envs'])
         zip_list.append(zip_file)
     return zip_list, b_folder
-
-
-if __name__ == '__main__':
-    home = Path().home()
-    project_folder_name = 'adelantos'
-    m_folder = home / project_folder_name
-
-    if not m_folder.exists():
-        print(f'Folder {m_folder} does not exists')
-        sys.exit(100)
-
-    output_folder = home / 'Documents' / f'{project_folder_name}_envs'
-    output_folder.mkdir(exist_ok=True)
-
-    zip_files, ts_backup_folder = backup_envs(m_folder, output_folder)
-    for i, zf in enumerate(zip_files, 1):
-        print_success(f'{i} {zf.name}')
-    print_success(f'Wrote {len(zip_files)} zip files')
-    print_success(f'Output folder: {ts_backup_folder}')
