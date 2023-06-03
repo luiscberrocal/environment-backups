@@ -10,7 +10,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.http import MediaFileUpload
 
-from django_scaffolding_tools._experimental.backup_envs.exceptions import UploadError
+from environment_backups.exceptions import UploadError
 
 
 class GDrive:
