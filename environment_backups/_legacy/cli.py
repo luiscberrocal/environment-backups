@@ -15,9 +15,11 @@ def main_arg_parser():
                                                   environment_folders=parsed_args.environment_folder)
         for i, zf in enumerate(zip_files, 1):
             file_size = zf.stat().st_size / 1024
-
             print_success(f'{i} {zf.name:40} size: {file_size:,.3f} KB')
+
         print_color(f'Wrote {len(zip_files)} zip files', color=TerminalColor.OK_CYAN)
+        if parsed_args.password:
+            print_error(f'Zipped files with password: "{parsed_args.password}"')
         print_color(f'Output folder: {ts_backup_folder}', color=TerminalColor.OK_CYAN)
     elif parsed_args.command == 'list':
         print_error('Not supported yet')
@@ -46,7 +48,13 @@ def parse_arguments():
     parser.add_argument(
         "-t", "--target-folder",
         type=Path,
-        help="Folder to save the zipped files",
+        help="Folder to save the zipped files.",
+        required=False
+    )
+    parser.add_argument(
+        "-p", "--password",
+        type=str,
+        help="Password for the zip files.",
         required=False
     )
     parsed_args = parser.parse_args()

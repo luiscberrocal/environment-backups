@@ -27,19 +27,6 @@ def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> D
     return folder_dict
 
 
-def zip_folder(zip_file: Path, folder_to_zip: Path):
-    def zipdir(path, ziph):
-        # ziph is zipfile handle
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                ziph.write(os.path.join(root, file),
-                           os.path.relpath(os.path.join(root, file),
-                                           os.path.join(path, '..')))
-
-    with zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        zipdir(folder_to_zip, zipf)
-
-
 def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
     def zipdir(path, ziph):
         # ziph is zipfile handle
@@ -63,7 +50,7 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
 
 
 def backup_envs(project_folder: Path, backup_folder: Path,
-                environment_folders: List[str],
+                environment_folders: List[str], password: str = None,
                 date_format='%Y%m%d_%H', ) -> Tuple[List[Path], Path]:
     project_envs_dict = get_projects_envs(project_folder, environment_folders)
     timestamp = datetime.now().strftime(date_format)
@@ -72,6 +59,6 @@ def backup_envs(project_folder: Path, backup_folder: Path,
     zip_list = []
     for project, v in project_envs_dict.items():
         zip_file = b_folder / f'{project}.zip'
-        zip_folder_with_pwd(zip_file, v['envs'])
+        zip_folder_with_pwd(zip_file, v['envs'], password=password)
         zip_list.append(zip_file)
     return zip_list, b_folder
