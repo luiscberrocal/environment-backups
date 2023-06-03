@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from environment_backups._legacy.pretty_print import print_success, print_error
+from environment_backups._legacy.pretty_print import print_success, print_error, print_color, TerminalColor
 from environment_backups.backups.backups import backup_envs
 
 COMMANDS = ['backup', 'list']
@@ -17,8 +17,8 @@ def main_arg_parser():
             file_size = zf.stat().st_size / 1024
 
             print_success(f'{i} {zf.name:40} size: {file_size:,.3f} KB')
-        print_success(f'Wrote {len(zip_files)} zip files')
-        print_success(f'Output folder: {ts_backup_folder}')
+        print_color(f'Wrote {len(zip_files)} zip files', color=TerminalColor.OK_CYAN)
+        print_color(f'Output folder: {ts_backup_folder}', color=TerminalColor.OK_CYAN)
     elif parsed_args.command == 'list':
         print_error('Not supported yet')
 
