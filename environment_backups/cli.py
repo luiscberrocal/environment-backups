@@ -1,5 +1,6 @@
 """Console script for environment_backups."""
 import argparse
+from pathlib import Path
 
 import click
 
@@ -12,33 +13,35 @@ def main():
     click.echo("CLI Application to backup environment variables.")
 
 
-def main_arg_parser(parsed_args):
+def main_arg_parser():
+    parser = argparse.ArgumentParser(description="Environment backups")
+    parser.add_argument(
+        "-e", "--environment-folder",
+        type=str,
+        nargs="+",
+        help="Name of the environment folder to backup",
+        default=['.envs']
+    )
+
+    parser.add_argument(
+        "-f", "--folder",
+        type=Path,
+        help="Folder where the projects are found.",
+        required=True
+    )
+    parser.add_argument(
+        "-t", "--target-folder",
+        type=Path,
+        help="Folder to save the zipped files",
+        required=True
+    )
+    parsed_args = parser.parse_args()
     print(type(parsed_args))
     print(parsed_args)
 
 
 if __name__ == "__main__":
     """
-    backup-environments -f /project/folders -t /target_folder/ -e .envs -e .env
+    environment-backups -f /project/folders -t /target_folder/ -e .envs -e .env
     """
-    parser = argparse.ArgumentParser(description="Environment backups")
-    parser.add_argument(
-        "-e", "--environment-folder",
-        type=str,
-        nargs="+",
-        help="Name of the environment folder to backup"
-    )
-
-    parser.add_argument(
-        "-f", "--folder",
-        type=str,
-        help="Folder where the projects are found."
-    )
-    parser.add_argument(
-        "-t", "--target-folder",
-        type=str,
-        help="Folder to save the zipped files"
-    )
-    parsed_args = parser.parse_args()
     # main()  # pragma: no cover
-    main_arg_parser(parsed_args)
