@@ -12,4 +12,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()  # pragma: no cover
+    """
+    environment-backups -f /project/folders -t /target_folder/ -e .envs -e .env
+    """
+    # main()  # pragma: no cover
