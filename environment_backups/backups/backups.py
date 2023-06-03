@@ -5,20 +5,23 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
+from environment_backups._legacy.pretty_print import print_success
+
 
 def list_all_projects(project_folder: Path) -> List[str]:
     folders = [x.path for x in os.scandir(project_folder) if x.is_dir()]
     return folders
 
 
-def get_projects_envs(project_folder: Path) -> Dict[str, Any]:
+def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> Dict[str, Any]:
     folders = list_all_projects(project_folder)
     folder_dict = dict()
     for folder in folders:
         path = Path(folder)
-        envs = path / '.envs'
-        if envs.exists():
-            folder_dict[path.name] = {'envs': envs}
+        for environment_folder in environment_folders:
+            envs = path / environment_folder
+            if envs.exists():
+                folder_dict[path.name] = {'envs': envs}
     return folder_dict
 
 
@@ -35,8 +38,11 @@ def zip_folder(zip_file: Path, folder_to_zip: Path):
         zipdir(folder_to_zip, zipf)
 
 
-def backup_envs(project_folder: Path, backup_folder: Path, date_format='%Y%m%d_%H') -> Tuple[List[Path], Path]:
-    project_envs_dict = get_projects_envs(project_folder)
+def backup_envs(project_folder: Path, backup_folder: Path,
+                environment_folders: List[str],
+                date_format='%Y%m%d_%H', ) -> Tuple[List[Path], Path]:
+
+    project_envs_dict = get_projects_envs(project_folder, environment_folders)
     timestamp = datetime.now().strftime(date_format)
     b_folder = backup_folder / timestamp
     b_folder.mkdir(exist_ok=True)
