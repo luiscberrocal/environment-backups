@@ -1,13 +1,9 @@
 import os
-import sys
-import zipfile
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
 from pyzipper import AESZipFile, ZIP_DEFLATED, WZ_AES
-
-from environment_backups._legacy.pretty_print import print_success
 
 
 def list_all_projects(project_folder: Path) -> List[str]:
@@ -28,24 +24,30 @@ def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> D
 
 
 def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
-    def zipdir(path, ziph):
-        # ziph is zipfile handle
+    """
+    Compresses a folder and creates a zip file with optional password protection.
+    @param zip_file:
+    @param folder_to_zip:
+    @param password:
+
+    """
+
+    def zipdir(path: Path, ziph):
+        """
+        Recursively adds files and directories to a zip file.
+        """
+
         for root, dirs, files in os.walk(path):
             for file in files:
-                ziph.write(os.path.join(root, file),
-                           os.path.relpath(os.path.join(root, file),
-                                           os.path.join(path, '..')))
+                file_path = os.path.join(root, file)
+                ziph.write(file_path, os.path.relpath(file_path, path.parent))
 
-    if password is None:
-        encryption = None
-    else:
-        encryption = WZ_AES
+    encryption = WZ_AES if password else None
+
     with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption) as zf:
-        if password is not None:
+        if password:
             pwd = password.encode('utf-8')
             zf.setpassword(pwd)
-        else:
-            zf.setpassword(None)
         zipdir(folder_to_zip, zf)
 
 
