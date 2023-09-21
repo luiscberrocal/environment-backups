@@ -1,6 +1,7 @@
 import json
 import pickle
 from pathlib import Path
+from typing import Optional
 
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -62,6 +63,46 @@ class GDrive:
             error_message = f'Upload error. Type {e.__class__.__name__} error {e}'
             raise UploadError(error_message)
 
+    def upload_folder(self, folder_to_upload: Path, parent_folder_id: str):
+        """
+        Uploads the content of a folder to Google Drive.
+
+        :param folder_to_upload: Path of the folder to upload.
+        :param parent_folder_id: ID of the Google Drive folder where the content should be uploaded.
+        """
+        # Traverse through the folder and its subfolders
+        folder_id = self.create_folder(folder_name=folder_to_upload.name, parent_folder_id=parent_folder_id)
+        for item in folder_to_upload.iterdir():
+            if item.is_dir():
+                # If the current item is a subfolder, create a folder in Google Drive and then upload its contents
+                folder_id = self.create_folder(item.name, folder_id)
+                self.upload_folder(item, folder_id)
+            else:
+                # If the current item is a file, upload it
+
+                self.upload(item, folder_id)
+
+
+    def create_folder(self, folder_name: str, parent_folder_id: Optional[str] = None) -> str:
+        """
+        Creates a folder in Google Drive.
+
+        :param folder_name: Name of the folder to create.
+        :param parent_folder_id: ID of the parent folder.
+        :return: ID of the created folder.
+        """
+        body = {
+            'name': folder_name,
+            'mimeType': 'application/vnd.google-apps.folder'
+        }
+        if parent_folder_id:
+            body['parents'] = [parent_folder_id]
+        folder = self.service.files().create(body=body, fields='id').execute()
+        return folder.get('id')
+
+
+# [if __name__ == '__main__': ...]
+
 
 if __name__ == '__main__':
     sec_file = Path(__file__).parent.parent.parent / '.envs' / 'google_drive' / 'client_secrets.json'
@@ -73,5 +114,9 @@ if __name__ == '__main__':
     print(file_to_upload, file_to_upload.exists())
     upload_folder_id = folders_dict['circulo_tests']  # Circulo tests
     gdrive = GDrive(secrets_file=sec_file)
-    response = gdrive.upload(file_to_upload, upload_folder_id)
-
+    # response = gdrive.upload(file_to_upload, upload_folder_id)
+    folder_to_upload = Path.home() / 'Documents' / 'PycharmProjects_envs' / '20230921_08'
+    gdrive.upload_folder(folder_to_upload=folder_to_upload, parent_folder_id=upload_folder_id)
+    # gdrive.create_folder('Test_folder', upload_folder_id)
+    # print(response)
+    print('finished')
