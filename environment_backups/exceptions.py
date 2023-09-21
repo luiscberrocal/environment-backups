@@ -1,4 +1,7 @@
 
 
-class UploadError(Exception):
+class EnvironmentBackupsError(Exception):
+    pass
+
+class UploadError(EnvironmentBackupsError):
     pass

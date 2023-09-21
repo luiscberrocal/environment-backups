@@ -2,8 +2,10 @@
 
 import click
 
+from environment_backups.backups.cli_commands import backup
 
-@click.command()
+
+@click.group()
 def main():
     """Main entrypoint."""
     click.echo("environment-backups")
@@ -13,6 +15,8 @@ def main():
 
 if __name__ == "__main__":
     """
-    environment-backups -f /project/folders -t /target_folder/ -e .envs -e .env
+    environment-backups -p /project/folders -b /target_folder/
     """
     # main()  # pragma: no cover
+
+main.add_command(backup)
