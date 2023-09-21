@@ -51,10 +51,10 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
         zipdir(folder_to_zip, zf)
 
 
-def backup_envs(project_folder: Path, backup_folder: Path,
+def backup_envs(projects_folder: Path, backup_folder: Path,
                 environment_folders: List[str], password: str = None,
                 date_format='%Y%m%d_%H', ) -> Tuple[List[Path], Path]:
-    project_envs_dict = get_projects_envs(project_folder, environment_folders)
+    project_envs_dict = get_projects_envs(projects_folder, environment_folders)
     timestamp = datetime.now().strftime(date_format)
     b_folder = backup_folder / timestamp
     b_folder.mkdir(exist_ok=True)

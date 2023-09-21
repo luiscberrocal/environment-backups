@@ -10,7 +10,7 @@ def main_arg_parser():
     """Main function to backup environment folders using ArgumentParser and regular print statements."""
     parsed_args = parse_arguments()
     if parsed_args.command == 'backup':
-        zip_files, ts_backup_folder = backup_envs(project_folder=parsed_args.folder,
+        zip_files, ts_backup_folder = backup_envs(projects_folder=parsed_args.folder,
                                                   backup_folder=parsed_args.target_folder,
                                                   environment_folders=parsed_args.environment_folder)
         for i, zf in enumerate(zip_files, 1):
