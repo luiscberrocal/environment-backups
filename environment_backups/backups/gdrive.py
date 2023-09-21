@@ -82,7 +82,6 @@ class GDrive:
 
                 self.upload(item, folder_id)
 
-
     def create_folder(self, folder_name: str, parent_folder_id: Optional[str] = None) -> str:
         """
         Creates a folder in Google Drive.
@@ -100,8 +99,42 @@ class GDrive:
         folder = self.service.files().create(body=body, fields='id').execute()
         return folder.get('id')
 
+    def list_content(self, parent_folder_id: str):
+        """
+        Lists all the content (files and folders) in a Google Drive folder.
 
-# [if __name__ == '__main__': ...]
+        :param parent_folder_id: ID of the Google Drive folder.
+        :return: List of dictionaries containing 'name' and 'id' of each item.
+        """
+        results = []
+        query = f"'{parent_folder_id}' in parents"
+
+        # Fetch files and folders from the Google Drive API
+        response = self.service.files().list(q=query,
+                                             fields="nextPageToken, files(id, name)").execute()
+
+        # Extract the file names and IDs
+        items = response.get('files', [])
+        for item in items:
+            results.append({
+                'name': item.get('name'),
+                'id': item.get('id')
+            })
+
+        # Handle pagination
+        while 'nextPageToken' in response:
+            page_token = response['nextPageToken']
+            response = self.service.files().list(q=query,
+                                                 fields="nextPageToken, files(id, name)",
+                                                 pageToken=page_token).execute()
+            items = response.get('files', [])
+            for item in items:
+                results.append({
+                    'name': item.get('name'),
+                    'id': item.get('id')
+                })
+
+        return results
 
 
 if __name__ == '__main__':
@@ -115,8 +148,14 @@ if __name__ == '__main__':
     upload_folder_id = folders_dict['circulo_tests']  # Circulo tests
     gdrive = GDrive(secrets_file=sec_file)
     # response = gdrive.upload(file_to_upload, upload_folder_id)
-    folder_to_upload = Path.home() / 'Documents' / 'PycharmProjects_envs' / '20230921_08'
+    # folder_to_upload = Path.home() / 'Documents' / 'PycharmProjects_envs' / '20230921_08'
+    folder_to_upload = Path.home() / 'Documents' / 'PycharmProjects_envs' / '20230910_09'
     gdrive.upload_folder(folder_to_upload=folder_to_upload, parent_folder_id=upload_folder_id)
     # gdrive.create_folder('Test_folder', upload_folder_id)
     # print(response)
-    print('finished')
+    print('finished uploading')
+    content = gdrive.list_content(parent_folder_id=upload_folder_id)
+    for c in content:
+        print(c)
+        print('-'*50)
+    print('FINISHED')
