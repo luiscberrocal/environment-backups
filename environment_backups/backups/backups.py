@@ -29,7 +29,6 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
     @param zip_file:
     @param folder_to_zip:
     @param password:
-
     """
 
     def zipdir(path: Path, ziph):
