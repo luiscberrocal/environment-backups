@@ -143,8 +143,8 @@ if __name__ == '__main__':
     with open(folder_file, 'r') as f:
         folders_dict = json.load(f)
     print(sec_file, sec_file.exists())
-    file_to_upload = sec_file.parent.parent.parent / 'README.md'
-    print(file_to_upload, file_to_upload.exists())
+    # file_to_upload = sec_file.parent.parent.parent / 'README.md'
+    # print(file_to_upload, file_to_upload.exists())
     upload_folder_id = folders_dict['circulo_tests']  # Circulo tests
     gdrive = GDrive(secrets_file=sec_file)
     # response = gdrive.upload(file_to_upload, upload_folder_id)
