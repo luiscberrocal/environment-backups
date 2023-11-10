@@ -10,9 +10,9 @@ from .. import exceptions
 
 
 class ConfigurationManager:
-    DEFAULT_CONFIG_FOLDER_NAME = '.invoicing_tools'
+    DEFAULT_CONFIG_FOLDER_NAME = '.environment_backups'
     DEFAULT_CONFIG_FILENAME = 'configuration.toml'
-    APP_NAME = 'invoicing-tools'
+    APP_NAME = DEFAULT_CONFIG_FOLDER_NAME[1:].replace('_', '-')
 
     def __init__(self, config_folder: Optional[Path] = None,
                  config_filename: Optional[str] = None):
