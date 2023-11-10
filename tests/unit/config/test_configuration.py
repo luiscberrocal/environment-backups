@@ -5,4 +5,4 @@ class TestConfigurationManager:
 
     def test_init(self, output_folder):
         configuration = ConfigurationManager(output_folder)
-        assert configuration
+        assert not configuration.config_file.exists()
