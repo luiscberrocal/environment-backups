@@ -16,6 +16,9 @@ class TestConfigurationManager:
 
         assert configuration.config_file.exists()
         assert config_data
+        assert config_data['application']
+        assert len(config_data['configurations'])
+
 
 
 
