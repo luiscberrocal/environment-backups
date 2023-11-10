@@ -9,14 +9,12 @@ from rich.panel import Panel
 from environment_backups import CONFIGURATION_MANAGER, CONSOLE
 from environment_backups import __version__ as current_version
 from environment_backups.backups.cli_commands import backup
+from environment_backups.config.cli_commands import config
 
 
 @click.group()
 def main():
     """Main entrypoint."""
-    click.echo("environment-backups")
-    click.echo("=" * len("environment-backups"))
-    click.echo("CLI Application to backup environment variables.")
 
 
 @click.command()
@@ -30,12 +28,6 @@ def about():
     CONSOLE.print(panel)
 
 
-if __name__ == "__main__":
-    """
-    environment-backups -p /project/folders -b /target_folder/
-    """
-    # main()  # pragma: no cover
-
 main.add_command(backup)
 main.add_command(about)
-
+main.add_command(config)
