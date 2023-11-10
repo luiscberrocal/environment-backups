@@ -38,7 +38,7 @@ class ConfigurationManager:
         self.config_backup_folder.mkdir(exist_ok=True)
         self.logs_folder.mkdir(exist_ok=True)
 
-    def write_configuration(self) -> None:
+    def save(self) -> None:
         if self.config_file.exists():
             self.backup()
         with open(self.config_file, 'w') as f:
@@ -60,6 +60,7 @@ class ConfigurationManager:
             raise ConnectionError('There is a configuration already loaded.')
         with open(import_file, 'r') as f:
             self.configuration = json.load(f)
+        self.save()
         return self
 
     def backup(self) -> Path:
