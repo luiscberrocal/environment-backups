@@ -1,12 +1,11 @@
 import json
 import os
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Optional, Any
 
 import toml
 
 from .utils import backup_file
-from .. import exceptions
 
 
 class ConfigurationManager:
@@ -32,6 +31,7 @@ class ConfigurationManager:
         self.username = os.getlogin()
         self.prep_config()
         self.configuration = {}
+        self.load_configuration()
 
     def prep_config(self):
         self.config_folder.mkdir(exist_ok=True)
@@ -45,7 +45,7 @@ class ConfigurationManager:
             toml.dump(self.configuration, f)
 
     def load_configuration(self) -> bool:
-        if not self.config_folder.exists():
+        if not self.config_file.exists():
             return False
         with open(self.config_file, 'r') as f:
             self.configuration = toml.load(f)
@@ -54,6 +54,13 @@ class ConfigurationManager:
     def export_to_json(self, export_file: Path) -> None:
         with open(export_file, 'w') as f:
             json.dump(self.configuration, f)
+
+    def import_from_json(self, import_file: Path) -> Any:
+        if self.configuration:
+            raise ConnectionError('There is a configuration already loaded.')
+        with open(import_file, 'r') as f:
+            self.configuration = json.load(f)
+        return self
 
     def backup(self) -> Path:
         backup_filename = backup_file(self.config_file, self.config_backup_folder)
@@ -65,4 +72,4 @@ class ConfigurationManager:
         return backup_filename
 
     def get_current(self):
-        self.configuration
+        return self.configuration
