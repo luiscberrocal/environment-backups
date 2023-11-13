@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional, Any
+from typing import Optional, Any, Dict
 
 import toml
 
@@ -74,3 +74,8 @@ class ConfigurationManager:
 
     def get_current(self):
         return self.configuration
+
+    def set_configuration(self, configuration: Dict[str, Any]) -> Any:
+        self.backup()
+        self.configuration = configuration
+        return self

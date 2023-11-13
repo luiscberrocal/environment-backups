@@ -1,4 +1,6 @@
+import signal
 import sys
+from functools import partial
 from typing import Any, Dict
 
 import click
@@ -13,6 +15,17 @@ def config():
     """Configuration entrypoint."""
 
 
+def custom_control_c_handler(config_dict: Dict[str, Any], signal_numer: int, frame: Any):
+    # save = click.confirm('Do you want to save your configuration?')
+    # save = input('Save?')
+    save = True
+    pprint(config_dict)
+    if save:
+        sys.exit(0)
+    else:
+        sys.exit(100)
+
+
 @click.command()
 def init():
     if CONFIGURATION_MANAGER.get_current():
@@ -20,7 +33,7 @@ def init():
         sys.exit(100)
 
     configuration_dict = {"application": {}, "configurations": []}
-
+    signal.signal(signal.SIGINT, partial(custom_control_c_handler, configuration_dict))
     prompt = 'Date format for backup folder prefix'
     configuration_dict['application']['date_format'] = click.prompt(prompt,
                                                                     default=DEFAULT_DATE_FORMAT)
