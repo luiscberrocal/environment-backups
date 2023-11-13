@@ -31,8 +31,11 @@ def init():
 
     prompt = 'Default password for zip files'
     configuration_dict['application']['password'] = click.prompt(prompt, default="")
-    c = prompt_for_configuration()
-    configuration_dict['configurations'].append(c)
+    keep_adding_configs = True
+    while keep_adding_configs:
+        c = prompt_for_configuration()
+        configuration_dict['configurations'].append(c)
+        keep_adding_configs = click.confirm('Do you want to add another configuration?')
 
     pprint(configuration_dict)
 
@@ -51,6 +54,17 @@ def prompt_for_configuration() -> Dict[str, Any]:
     config_dict['project_folder'] = click.prompt(prompt, type=click.Path(exists=True))
 
     prompt = 'Backup folder'
-    config_dict['backup_folder'] = click.prompt(prompt, type=click.Path(exists=True))
+    config_dict['backup_folder'] = click.prompt(prompt, type=click.Path(exists=False))
+
+    prompt = 'Computer name'
+    config_dict['computer_name'] = click.prompt(prompt)
+
+    prompt = 'Google drive support?'
+    google_drive_support = click.confirm(prompt)
+    if google_drive_support:
+        prompt = 'Google drive folder id'
+        config_dict['google_drive_folder_id'] = click.prompt(prompt)
+        prompt = 'Google authentication file'
+        config_dict['google_authentication_file'] = click.prompt(prompt, type=click.Path(exists=False))
 
     return config_dict
