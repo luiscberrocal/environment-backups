@@ -60,6 +60,7 @@ def init():
 
 config.add_command(init)
 
+# TODO Add edit configuration functionality
 
 def prompt_for_configuration() -> Dict[str, Any]:
     config_dict = {}

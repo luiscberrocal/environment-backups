@@ -3,6 +3,8 @@ from pathlib import Path
 
 import pytest
 
+from environment_backups import ConfigurationManager
+
 
 @pytest.fixture(scope='session')
 def output_folder() -> Path:
@@ -22,3 +24,8 @@ def tmp_config_folder(output_folder) -> Path:
 def fixtures_folder() -> Path:
     folder = Path(__file__).parent / 'fixtures'
     return folder
+
+
+@pytest.fixture
+def config_manager(tmp_path):
+    return ConfigurationManager(config_root_folder=tmp_path)
