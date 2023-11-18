@@ -28,6 +28,7 @@ def custom_control_c_handler(config_dict: Dict[str, Any], signal_numer: int, fra
 
 @click.command()
 def init():
+    click.secho(f'Init configuration file: {CONFIGURATION_MANAGER.config_file}', fg='green')
     if CONFIGURATION_MANAGER.get_current():
         click.secho(f'Configuration already exists.')
         sys.exit(100)
@@ -50,8 +51,12 @@ def init():
         configuration_dict['configurations'].append(c)
         keep_adding_configs = click.confirm('Do you want to add another configuration?')
 
-    pprint(configuration_dict)
+    # pprint(configuration_dict)
+    CONFIGURATION_MANAGER.set_configuration(configuration_dict)
+    save = click.confirm('Save configuration?')
 
+    if save:
+        CONFIGURATION_MANAGER.save()
 
 config.add_command(init)
 

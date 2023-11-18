@@ -64,8 +64,9 @@ class ConfigurationManager:
         return self
 
     def backup(self) -> Path:
-        backup_filename = backup_file(self.config_file, self.config_backup_folder)
-        return backup_filename
+        if self.config_file.exists():
+            backup_filename = backup_file(self.config_file, self.config_backup_folder)
+            return backup_filename
 
     def delete(self) -> Path:
         backup_filename: Path = self.backup()
