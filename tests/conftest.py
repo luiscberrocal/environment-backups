@@ -1,5 +1,6 @@
 import shutil
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -29,3 +30,12 @@ def fixtures_folder() -> Path:
 @pytest.fixture
 def config_manager(tmp_path):
     return ConfigurationManager(config_root_folder=tmp_path)
+
+
+@pytest.fixture
+def mock_config_manager(mocker):
+    # Create a MagicMock object to mock CONFIGURATION_MANAGER
+    mock_manager = MagicMock()
+    # Replace CONFIGURATION_MANAGER with the mock object
+    mocker.patch('environment_backups.CONFIGURATION_MANAGER', new=mock_manager)
+    return mock_manager
