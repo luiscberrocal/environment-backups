@@ -16,12 +16,14 @@ def test_init_existing_values(mocker):
     assert result.exit_code == 100
 
 
-def test_init_command():
+def test_init_command(mock_config_manager):
     runner = CliRunner()
-    # Mock inputs for the prompts in the order they appear
     mock_inputs = '\n'.join(['%Y-%m-%d', 'env_folder', 'password', 'No', 'Yes'])
     result = runner.invoke(config, ['init'], input=mock_inputs)
 
     assert result.exit_code == 0
     assert 'Init configuration file' in result.output
-    # Add more assertions as necessary to validate the command's output and behavior
+    # Assert if the mock CONFIGURATION_MANAGER was used correctly
+    mock_config_manager.set_configuration.assert_called_once()
+    if "Yes" in mock_inputs.split('\n'):
+        mock_config_manager.save.assert_called_once()
