@@ -1,8 +1,8 @@
 from click.testing import CliRunner
 
 import environment_backups
-
 from environment_backups.config.cli_commands import config
+
 
 def test_init_existing_values(mocker):
     mocker.patch('environment_backups.config.cli_commands.CONFIGURATION_MANAGER.get_current',
@@ -16,10 +16,12 @@ def test_init_existing_values(mocker):
     assert result.exit_code == 100
 
 
-def test_init_command(mock_config_manager):
+def test_init_command(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
-    mock_inputs = '\n'.join(['%Y-%m-%d', 'env_folder', 'password', 'No', 'Yes'])
+    mock_inputs = '\n'.join(['%Y-%m-%d', '.envs', '',
+                             'my_config_name', str(tmp_path), str(tmp_path), "my_computer_name"
+                                                                             'N', 'Y'])
     result = runner.invoke(config, ['init'], input=mock_inputs)
 
     assert result.exit_code == 0
