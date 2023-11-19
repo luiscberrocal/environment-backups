@@ -17,6 +17,7 @@ def test_init_existing_values(mocker):
 
 
 def test_init_command(mock_config_manager):
+    mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
     mock_inputs = '\n'.join(['%Y-%m-%d', 'env_folder', 'password', 'No', 'Yes'])
     result = runner.invoke(config, ['init'], input=mock_inputs)

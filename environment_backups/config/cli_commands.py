@@ -58,7 +58,9 @@ def init():
     if save:
         CONFIGURATION_MANAGER.save()
 
+
 config.add_command(init)
+
 
 # TODO Add edit configuration functionality
 

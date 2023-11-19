@@ -37,5 +37,5 @@ def mock_config_manager(mocker):
     # Create a MagicMock object to mock CONFIGURATION_MANAGER
     mock_manager = MagicMock()
     # Replace CONFIGURATION_MANAGER with the mock object
-    mocker.patch('environment_backups.CONFIGURATION_MANAGER', new=mock_manager)
+    mocker.patch('environment_backups.config.cli_commands.CONFIGURATION_MANAGER', new=mock_manager)
     return mock_manager
