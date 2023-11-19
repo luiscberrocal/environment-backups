@@ -7,7 +7,8 @@ from environment_backups.exceptions import EnvironmentBackupsError
 
 logger = logging.getLogger(__name__)
 
-def backup_file(filename: Path, backup_folder: Path, current_version: str=None) -> Path:
+
+def backup_file(filename: Path, backup_folder: Path, current_version: str = None) -> Path:
     if not backup_folder.is_dir():
         error_message = f'Backup folder has to be a folder.' \
                         f' Supplied: {backup_folder}. Type: {type(backup_folder)}'

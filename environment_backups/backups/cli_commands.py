@@ -18,10 +18,12 @@ def backup(projects_folder: Path, backup_folder: Path):
         raise EnvironmentBackupsError('Missing backup folder')
     else:
         backup_folder = Path(backup_folder)
-    # TODO Add to configuration
     environment_folders = ['.envs']
 
     zip_list, b_folder = backup_envs(projects_folder=projects_folder, backup_folder=backup_folder,
                                      environment_folders=environment_folders)
     for i, zip_file in enumerate(zip_list, 1):
         click.secho(f'{i:3}. {zip_file.name}', fg='green')
+
+ # TODO add
+

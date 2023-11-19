@@ -27,6 +27,18 @@ def custom_control_c_handler(config_dict: Dict[str, Any], signal_numer: int, fra
 
 
 @click.command()
+def reset():
+    if not CONFIGURATION_MANAGER.config_file.exists():
+        click.secho(f'No configuration file found {CONFIGURATION_MANAGER.config_file}', fg='red')
+    message = (f'By resetting the configuration the {CONFIGURATION_MANAGER.config_file}'
+               f' will be deleted. Are you sure?')
+    confirm = click.confirm(message)
+    if confirm:
+        backup_file = CONFIGURATION_MANAGER.delete()
+        click.secho(f'Configuration file deleted. A backup was created {backup_file}', fg='green')
+
+
+@click.command()
 def init():
     click.secho(f'Init configuration file: {CONFIGURATION_MANAGER.config_file}', fg='green')
     if CONFIGURATION_MANAGER.get_current():
@@ -34,7 +46,7 @@ def init():
         sys.exit(100)
 
     configuration_dict = {"application": {}, "configurations": []}
-    signal.signal(signal.SIGINT, partial(custom_control_c_handler, configuration_dict))
+    #  signal.signal(signal.SIGINT, partial(custom_control_c_handler, configuration_dict))
     prompt = 'Date format for backup folder prefix'
     configuration_dict['application']['date_format'] = click.prompt(prompt,
                                                                     default=DEFAULT_DATE_FORMAT)
@@ -58,7 +70,10 @@ def init():
     if save:
         CONFIGURATION_MANAGER.save()
 
+
 config.add_command(init)
+config.add_command(reset)
+
 
 # TODO Add edit configuration functionality
 
