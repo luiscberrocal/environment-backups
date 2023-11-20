@@ -1,6 +1,4 @@
-import signal
 import sys
-from functools import partial
 from typing import Any, Dict
 
 import click
