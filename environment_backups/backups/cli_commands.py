@@ -25,5 +25,9 @@ def backup(projects_folder: Path, backup_folder: Path):
     for i, zip_file in enumerate(zip_list, 1):
         click.secho(f'{i:3}. {zip_file.name}', fg='green')
 
- # TODO add
+ # TODO add backup by name. environment-backups backup --name adelantos --upload
+ # TODO Upload to google after excectuting a backup.
+ 
+
+
 
