@@ -1,7 +1,13 @@
+from datetime import datetime
 from pathlib import Path
 
-from environment_backups.backups.backups import list_all_projects, get_projects_envs, zip_folder_with_pwd
+import pytest
 
+from environment_backups.backups.backups import list_all_projects, get_projects_envs, zip_folder_with_pwd, backup_envs, \
+    backup_environments
+from environment_backups.exceptions import ConfigurationError
+
+# TODO Fix broken tests
 
 def test_list_all_projects_with_existing_folders(mocker):
     # Mock os.scandir to return a list of mock directories
@@ -71,3 +77,76 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
     zip_folder_with_pwd(zip_file, folder_to_zip)
 
     assert zip_file.exists()
+
+def test_backup_envs_with_valid_data(mocker, tmp_path):
+    # Mock get_projects_envs to return a dictionary of projects with environments
+    mocker.patch(
+        'your_module.get_projects_envs',
+        return_value={'project1': {'envs': Path('/envs/project1')}}
+    )
+
+    # Mock os.path.exists and Path.mkdir
+    mocker.patch.object(Path, 'exists', return_value=True)
+    mocker.patch.object(Path, 'mkdir')
+
+    # Mock datetime to control the timestamp
+    mocker.patch('datetime.datetime')
+    datetime.now.return_value.strftime.return_value = '20231121_12'
+
+    # Paths for projects folder and backup folder
+    projects_folder = Path('/projects')
+    backup_folder = tmp_path / 'backups'
+
+    # Call the function
+    zip_list, b_folder = backup_envs(
+        projects_folder=projects_folder,
+        backup_folder=backup_folder,
+        environment_folders=['env1', 'env2'],
+        password='password'
+    )
+
+    # Assertions
+    assert len(zip_list) == 1
+    assert b_folder == backup_folder / '20231121_12'
+    assert zip_list[0] == backup_folder / '20231121_12/project1.zip'
+
+def test_backup_environments_with_valid_configuration(mocker, tmp_path):
+    # Mock CONFIGURATION_MANAGER and get_configuration_by_name
+    mocker.patch(
+        'your_module.CONFIGURATION_MANAGER.get_current',
+        return_value={'password': 'password', 'env_folder_pattern': ['env'], 'date_format': '%Y%m%d_%H'}
+    )
+    mocker.patch(
+        'your_module.get_configuration_by_name',
+        return_value=({'project_folder': '/projects', 'backup_folder': str(tmp_path / 'backups')}, None)
+    )
+
+    # Mock backup_envs
+    mocker.patch(
+        'your_module.backup_envs',
+        return_value=([Path('/backups/backup.zip')], tmp_path / 'backups')
+    )
+
+    # Call the function
+    zip_list, b_folder = backup_environments('test_env')
+
+    # Assertions
+    assert len(zip_list) == 1
+    assert zip_list[0] == Path('/backups/backup.zip')
+    assert b_folder == tmp_path / 'backups'
+
+def test_backup_environments_with_invalid_configuration(mocker):
+    # Mock CONFIGURATION_MANAGER and get_configuration_by_name to return None
+    mocker.patch(
+        'your_module.CONFIGURATION_MANAGER.get_current',
+        return_value={'password': '', 'env_folder_pattern': ['env'], 'date_format': '%Y%m%d_%H'}
+    )
+    mocker.patch(
+        'your_module.get_configuration_by_name',
+        return_value=(None, None)
+    )
+
+    # Test with an invalid configuration to raise ConfigurationError
+    with pytest.raises(ConfigurationError) as excinfo:
+        backup_environments('invalid_env')
+    assert 'No environment configuration found for "invalid_env"' in str(excinfo.value)

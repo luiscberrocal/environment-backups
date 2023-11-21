@@ -11,3 +11,6 @@ from environment_backups.config.configuration import ConfigurationManager
 CONFIGURATION_MANAGER = ConfigurationManager()
 
 CONSOLE = Console()
+
+
+# ADD tox support
