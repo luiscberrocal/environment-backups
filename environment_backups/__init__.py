@@ -2,11 +2,15 @@
 
 __author__ = """Luis C. Berrocal"""
 __email__ = 'luis.berrocal.1942@gmail.com'
-__version__ = '0.4.1'
+__version__ = '0.4.2'
 
 from rich.console import Console
+
 from environment_backups.config.configuration import ConfigurationManager
 
 CONFIGURATION_MANAGER = ConfigurationManager()
 
 CONSOLE = Console()
+
+
+# ADD tox support

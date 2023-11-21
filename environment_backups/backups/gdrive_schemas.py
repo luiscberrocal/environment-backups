@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import List
 
-from pydantic import BaseModel, Field, HttpUrl, AnyHttpUrl, ValidationError
+from pydantic import AnyHttpUrl, BaseModel, Field, HttpUrl, ValidationError
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
 

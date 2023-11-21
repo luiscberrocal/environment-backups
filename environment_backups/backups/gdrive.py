@@ -30,6 +30,7 @@ class GDrive:
         if token_file.exists():
             # Read the token from the file and
             # store it in the variable creds
+            # TODO test for age of token. If token is older than 2 weeks?? don't load it.
             with open(token_file, 'rb') as token:
                 creds = pickle.load(token)
         # If no valid credentials are available,
@@ -90,10 +91,7 @@ class GDrive:
         :param parent_folder_id: ID of the parent folder.
         :return: ID of the created folder.
         """
-        body = {
-            'name': folder_name,
-            'mimeType': 'application/vnd.google-apps.folder'
-        }
+        body = {'name': folder_name, 'mimeType': 'application/vnd.google-apps.folder'}
         if parent_folder_id:
             body['parents'] = [parent_folder_id]
         folder = self.service.files().create(body=body, fields='id').execute()
@@ -110,29 +108,24 @@ class GDrive:
         query = f"'{parent_folder_id}' in parents"
 
         # Fetch files and folders from the Google Drive API
-        response = self.service.files().list(q=query,
-                                             fields="nextPageToken, files(id, name)").execute()
+        response = self.service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
 
         # Extract the file names and IDs
         items = response.get('files', [])
         for item in items:
-            results.append({
-                'name': item.get('name'),
-                'id': item.get('id')
-            })
+            results.append({'name': item.get('name'), 'id': item.get('id')})
 
         # Handle pagination
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
-            response = self.service.files().list(q=query,
-                                                 fields="nextPageToken, files(id, name)",
-                                                 pageToken=page_token).execute()
+            response = (
+                self.service.files()
+                .list(q=query, fields="nextPageToken, files(id, name)", pageToken=page_token)
+                .execute()
+            )
             items = response.get('files', [])
             for item in items:
-                results.append({
-                    'name': item.get('name'),
-                    'id': item.get('id')
-                })
+                results.append({'name': item.get('name'), 'id': item.get('id')})
 
         return results
 
@@ -157,5 +150,5 @@ if __name__ == '__main__':
     content = gdrive.list_content(parent_folder_id=upload_folder_id)
     for c in content:
         print(c)
-        print('-'*50)
+        print('-' * 50)
     print('FINISHED')

@@ -6,7 +6,6 @@ from environment_backups.config.configuration import ConfigurationManager
 
 
 class TestConfigurationManager:
-
     def test_init(self, tmp_config_folder):
         configuration = ConfigurationManager(tmp_config_folder)
         assert not configuration.config_file.exists()
@@ -106,5 +105,6 @@ def test_set_and_get_configuration(config_manager):
     config_manager.set_configuration(test_config)
 
     assert config_manager.get_current() == test_config
+
 
 # More tests can be added as needed to cover other aspects or edge cases.
