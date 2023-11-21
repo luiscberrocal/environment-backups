@@ -64,6 +64,7 @@ class ConfigurationManager:
 
     def backup(self) -> Path:
         if self.config_file.exists():
+            # TODO Add version number
             backup_filename = backup_file(self.config_file, self.config_backup_folder)
             return backup_filename
 
