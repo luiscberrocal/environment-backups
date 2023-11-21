@@ -1,13 +1,13 @@
 # import the required libraries
 import json
-import pickle
 import os.path
+import pickle
 from mimetypes import MimeTypes
 from pathlib import Path
 
-from googleapiclient.discovery import build
-from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 
 from environment_backups.exceptions import UploadError
@@ -91,8 +91,11 @@ def get_file_list(N):
     # request a list of first N files or
     # folders with name and id from the API.
     resource = service.files()
-    result = resource.list(pageSize=N, fields="files(id, name)",
-                           q="mimeType = 'application/vnd.google-apps.folder' and name = 'Envs'", ).execute()
+    result = resource.list(
+        pageSize=N,
+        fields="files(id, name)",
+        q="mimeType = 'application/vnd.google-apps.folder' and name = 'Envs'",
+    ).execute()
 
     # return the result dictionary containing
     # the information about the files
@@ -158,9 +161,11 @@ def main():
 
     gdrive = GDrive(secrets_file)
     test_file = Path(
-        '/home/luiscberrocal/PycharmProjects/django_scaffolding_tools/.envs/google_drive/google_drive_folders_id.json')
+        '/home/luiscberrocal/PycharmProjects/django_scaffolding_tools/.envs/google_drive/google_drive_folders_id.json'
+    )
     r = gdrive.upload(test_file, folder_id)
     assert r == ''
+
 
 if __name__ == '__main__':
     main()

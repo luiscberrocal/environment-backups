@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional, Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import toml
 
@@ -13,8 +13,7 @@ class ConfigurationManager:
     DEFAULT_CONFIG_FILENAME = 'configuration.toml'
     APP_NAME = DEFAULT_CONFIG_FOLDER_NAME[1:].replace('_', '-')
 
-    def __init__(self, config_root_folder: Optional[Path] = None,
-                 config_filename: Optional[str] = None):
+    def __init__(self, config_root_folder: Optional[Path] = None, config_filename: Optional[str] = None):
         if config_root_folder is None:
             self.config_folder = Path().home() / self.DEFAULT_CONFIG_FOLDER_NAME
         else:
@@ -82,9 +81,9 @@ class ConfigurationManager:
         return self
 
 
-def get_configuration_by_name(config_name: str,
-                              app_configuration: Dict[str, Any]
-                              ) -> Tuple[Dict[str, Any] | None, float]:
+def get_configuration_by_name(
+    config_name: str, app_configuration: Dict[str, Any]
+) -> Tuple[Dict[str, Any] | None, float]:
     """Get the configuration based on a name.
     @param config_name: Name of the configuration.
     @param app_configuration: Application configuration.

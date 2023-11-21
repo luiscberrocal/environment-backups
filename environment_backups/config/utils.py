@@ -10,8 +10,7 @@ logger = logging.getLogger(__name__)
 
 def backup_file(filename: Path, backup_folder: Path, current_version: str = None) -> Path:
     if not backup_folder.is_dir():
-        error_message = f'Backup folder has to be a folder.' \
-                        f' Supplied: {backup_folder}. Type: {type(backup_folder)}'
+        error_message = f'Backup folder has to be a folder.' f' Supplied: {backup_folder}. Type: {type(backup_folder)}'
         logger.error(error_message)
         raise EnvironmentBackupsError(error_message)
 
@@ -26,7 +25,6 @@ def backup_file(filename: Path, backup_folder: Path, current_version: str = None
         shutil.copy(filename, backup_filename)
         return backup_filename
     except Exception as e:
-        error_message = f'Unexpected error backing up file {filename}. Type: {e.__class__.__name__}' \
-                        f' error: {e}'
+        error_message = f'Unexpected error backing up file {filename}. Type: {e.__class__.__name__}' f' error: {e}'
         logger.error(error_message)
         raise EnvironmentBackupsError(error_message)

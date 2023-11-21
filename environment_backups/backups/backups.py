@@ -1,9 +1,9 @@
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
 
-from pyzipper import AESZipFile, ZIP_DEFLATED, WZ_AES
+from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
 
 from environment_backups import CONFIGURATION_MANAGER
 from environment_backups.config.configuration import get_configuration_by_name
@@ -55,11 +55,13 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
 
 
 # TODO Add * to force use of names.
-def backup_envs(projects_folder: Path,
-                backup_folder: Path,
-                environment_folders: List[str],
-                password: str = None,
-                date_format='%Y%m%d_%H', ) -> Tuple[List[Path], Path]:
+def backup_envs(
+    projects_folder: Path,
+    backup_folder: Path,
+    environment_folders: List[str],
+    password: str = None,
+    date_format='%Y%m%d_%H',
+) -> Tuple[List[Path], Path]:
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
     # TODO add computer name to the folder?? or the file??
     timestamp = datetime.now().strftime(date_format)
@@ -92,6 +94,6 @@ def backup_environments(environment_name: str) -> Tuple[List[Path], Path]:
         backup_folder=backup_folder,
         environment_folders=environment_folders,
         password=pwd,
-        date_format=date_format
+        date_format=date_format,
     )
     return zip_list, b_folder
