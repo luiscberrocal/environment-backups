@@ -3,7 +3,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
 
+from deprecated import deprecated
 from pyzipper import AESZipFile, ZIP_DEFLATED, WZ_AES
+
+from environment_backups import CONFIGURATION_MANAGER
+from environment_backups.config.configuration import get_configuration_by_name
+from environment_backups.exceptions import ConfigurationError
 
 
 def list_all_projects(project_folder: Path) -> List[str]:
@@ -49,7 +54,7 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
             zf.setpassword(pwd)
         zipdir(folder_to_zip, zf)
 
-
+# TODO Add * to force use of names.
 def backup_envs(projects_folder: Path, backup_folder: Path,
                 environment_folders: List[str], password: str = None,
                 date_format='%Y%m%d_%H', ) -> Tuple[List[Path], Path]:
@@ -63,3 +68,15 @@ def backup_envs(projects_folder: Path, backup_folder: Path,
         zip_folder_with_pwd(zip_file, v['envs'], password=password)
         zip_list.append(zip_file)
     return zip_list, b_folder
+
+
+def backup_environments(environment_name: str):
+    app_configuration = CONFIGURATION_MANAGER.get_current()
+    cfg, _ = get_configuration_by_name(environment_name, app_configuration)
+    if cfg is None:
+        error_message = f'No environment configuration found for "{environment_name}"'
+        raise ConfigurationError(error_message)
+    project_folder = Path(cfg['project_folder'])
+    backup_folder = Path(cfg['backup_folder'])
+
+

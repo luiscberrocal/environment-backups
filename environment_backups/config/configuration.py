@@ -1,7 +1,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Tuple
 
 import toml
 
@@ -80,3 +80,21 @@ class ConfigurationManager:
         self.backup()
         self.configuration = configuration
         return self
+
+
+def get_configuration_by_name(config_name: str,
+                              app_configuration: Dict[str, Any]
+                              ) -> Tuple[Dict[str, Any] | None, float]:
+    """Get the configuration based on a name.
+    @param config_name: Name of the configuration.
+    @param app_configuration: Application configuration.
+    @return: Tuple with configuration and fuzzy probabilliy
+    """
+    # TODO Implement thefuzz for fuzzy search
+    configurations = app_configuration.get('configurations', [])
+    if len(configurations) == 0:
+        return None, 100.0
+
+    config = configurations.get(config_name, None)
+
+    return config, 100.0
