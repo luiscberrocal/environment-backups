@@ -13,5 +13,13 @@ CONFIGURATION_MANAGER = ConfigurationManager()
 CONSOLE = Console()
 
 
+def logger_configuration():
+    import logging.config
+    from .constants import LOGGING
+    logging.config.dictConfig(LOGGING)
+
+
+logger_configuration()
+
 # TODO Add tox support
 # TODO Clean toml file for python versions
