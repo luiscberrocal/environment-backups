@@ -7,9 +7,17 @@ from environment_backups.exceptions import EnvironmentBackupsError
 
 
 @click.command()
+@click.option('environment', '-e', '--environment', type=str, required=False)
 @click.option('projects_folder', '-p', '--projects-folder', type=click.Path(exists=True), required=False)
 @click.option('backup_folder', '-b', '--backup-folder', type=click.Path(exists=False), required=False)
-def backup(projects_folder: Path, backup_folder: Path):
+def backup(environment:str, projects_folder: Path, backup_folder: Path):
+    if environment:
+        pass
+    else:
+        legacy_backup(backup_folder, projects_folder)
+
+
+def legacy_backup(backup_folder, projects_folder):
     if projects_folder is None:
         raise EnvironmentBackupsError('Missing projects folder')
     else:
@@ -19,13 +27,11 @@ def backup(projects_folder: Path, backup_folder: Path):
     else:
         backup_folder = Path(backup_folder)
     environment_folders = ['.envs']
-
     zip_list, b_folder = backup_envs(
         projects_folder=projects_folder, backup_folder=backup_folder, environment_folders=environment_folders
     )
     for i, zip_file in enumerate(zip_list, 1):
         click.secho(f'{i:3}. {zip_file.name}', fg='green')
-
 
 # TODO add backup by name. environment-backups backup --name adelantos --upload
 # TODO Upload to google after excectuting a backup.

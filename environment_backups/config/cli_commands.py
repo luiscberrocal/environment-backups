@@ -75,6 +75,10 @@ config.add_command(reset)
 
 # TODO Add edit configuration functionality
 
+# TODO Add restore backup capabilities
+
+# TODO Add support for password at configurations level
+# TODO Add schemas for configuration
 
 def prompt_for_configuration() -> Dict[str, Any]:
     config_dict = {}

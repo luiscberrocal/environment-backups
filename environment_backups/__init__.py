@@ -13,4 +13,5 @@ CONFIGURATION_MANAGER = ConfigurationManager()
 CONSOLE = Console()
 
 
-# ADD tox support
+# TODO Add tox support
+# TODO Clean toml file for python versions
