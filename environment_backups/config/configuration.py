@@ -91,10 +91,12 @@ def get_configuration_by_name(
     @return: Tuple with configuration and fuzzy probabilliy
     """
     # TODO Implement thefuzz for fuzzy search
+    config = None
     configurations = app_configuration.get('configurations', [])
     if len(configurations) == 0:
         return None, 100.0
-
-    config = configurations.get(config_name, None)
+    for configuration in configurations:
+        if configuration['name'] == config_name:
+            config = configuration
 
     return config, 100.0

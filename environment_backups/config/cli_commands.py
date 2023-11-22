@@ -51,7 +51,7 @@ def init():
 
     prompt = 'Environment folder pattern name to parse. If several separate by a comma'
     env_folders = click.prompt(prompt, default=DEFAULT_ENV_FOLDER)
-    configuration_dict['application']['environment folder pattern'] = [x.strip() for x in env_folders.split(',')]
+    configuration_dict['application']['environment_folder_pattern'] = [x.strip() for x in env_folders.split(',')]
 
     prompt = 'Default password for zip files'
     configuration_dict['application']['password'] = click.prompt(prompt, default="")
@@ -75,6 +75,10 @@ config.add_command(reset)
 
 # TODO Add edit configuration functionality
 
+# TODO Add restore backup capabilities
+
+# TODO Add support for password at configurations level
+# TODO Add schemas for configuration
 
 def prompt_for_configuration() -> Dict[str, Any]:
     config_dict = {}
@@ -90,6 +94,7 @@ def prompt_for_configuration() -> Dict[str, Any]:
     config_dict['backup_folder'] = click.prompt(prompt, type=click.Path(exists=False))
 
     prompt = 'Computer name'
+    # TODO Get computer name from hostname??
     config_dict['computer_name'] = click.prompt(prompt)
 
     prompt = 'Google drive support?'
