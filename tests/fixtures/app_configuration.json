@@ -1,6 +1,6 @@
 {
     "application": {
-        "env_folder_pattern": [
+        "environment_folder_pattern": [
             ".envs"
         ],
         "date_format": "%Y%m%d_%H",

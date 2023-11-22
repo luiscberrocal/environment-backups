@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime
 from pathlib import Path
@@ -9,6 +10,8 @@ from environment_backups import CONFIGURATION_MANAGER
 from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import ConfigurationError
 
+logger = logging.getLogger()
+
 
 def list_all_projects(project_folder: Path) -> List[str]:
     folders = [x.path for x in os.scandir(project_folder) if x.is_dir()]
@@ -16,7 +19,10 @@ def list_all_projects(project_folder: Path) -> List[str]:
 
 
 def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> Dict[str, Any]:
+    logger.debug(f'[BUG]  project folder {project_folder}')
+    logger.debug(f'[BUG] environment folders {environment_folders}')
     folders = list_all_projects(project_folder)
+    logger.debug(f'[BUG] {folders}')
     folder_dict = dict()
     for folder in folders:
         path = Path(folder)
@@ -84,9 +90,10 @@ def backup_environment(environment_name: str) -> Tuple[List[Path], Path]:
     pwd = app_configuration.get('password')
     # if len(pwd) == 0:
     #     pwd = None
-
-    environment_folders = app_configuration.get('env_folder_pattern')
-    date_format = app_configuration.get('date_format')
+    # logger.debug(app_configuration)
+    environment_folders = app_configuration['application'].get('environment_folder_pattern')
+    logger.debug(f'[BUG] environment_folder  {environment_folders}')
+    date_format = app_configuration['application'].get('date_format')
     project_folder = Path(cfg['project_folder'])
     backup_folder = Path(cfg['backup_folder'])
     zip_list, b_folder = backup_envs(
