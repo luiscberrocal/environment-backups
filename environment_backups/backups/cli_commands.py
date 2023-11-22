@@ -1,8 +1,11 @@
+import sys
 from pathlib import Path
 
 import click
 
-from environment_backups.backups.backups import backup_envs
+from environment_backups import CONFIGURATION_MANAGER
+from environment_backups.backups.backups import backup_envs, backup_environment
+from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import EnvironmentBackupsError
 
 
@@ -10,9 +13,18 @@ from environment_backups.exceptions import EnvironmentBackupsError
 @click.option('environment', '-e', '--environment', type=str, required=False)
 @click.option('projects_folder', '-p', '--projects-folder', type=click.Path(exists=True), required=False)
 @click.option('backup_folder', '-b', '--backup-folder', type=click.Path(exists=False), required=False)
-def backup(environment:str, projects_folder: Path, backup_folder: Path):
+def backup(environment: str, projects_folder: Path, backup_folder: Path):
     if environment:
-        pass
+        app_cfg = CONFIGURATION_MANAGER.get_current()
+        env_cfg, _ = get_configuration_by_name(config_name=environment, app_configuration=app_cfg)
+        if env_cfg is None:
+            click.secho(f'No environment configuration found for {environment}.', fg='red')
+            sys.exit(100)
+        zip_list, b_folder = backup_environment(environment_name=environment)
+
+        for i, zip_file in enumerate(zip_list, 1):
+            click.secho(f'{i:3}. {zip_file.name}', fg='green')
+
     else:
         legacy_backup(backup_folder, projects_folder)
 
