@@ -28,7 +28,6 @@ def about():
     content.append(f'Configuration file: {CONFIGURATION_MANAGER.config_file}')
     panel = Panel('\n'.join(content), title=app_name, subtitle=f"version: {current_version}")
     CONSOLE.print(panel)
-    logger.debug('Logging to screen')
 
 
 

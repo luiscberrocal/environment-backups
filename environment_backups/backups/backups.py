@@ -19,10 +19,7 @@ def list_all_projects(project_folder: Path) -> List[str]:
 
 
 def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> Dict[str, Any]:
-    logger.debug(f'[BUG]  project folder {project_folder}')
-    logger.debug(f'[BUG] environment folders {environment_folders}')
     folders = list_all_projects(project_folder)
-    logger.debug(f'[BUG] {folders}')
     folder_dict = dict()
     for folder in folders:
         path = Path(folder)
@@ -88,11 +85,7 @@ def backup_environment(environment_name: str) -> Tuple[List[Path], Path]:
         error_message = f'No environment configuration found for "{environment_name}"'
         raise ConfigurationError(error_message)
     pwd = app_configuration.get('password')
-    # if len(pwd) == 0:
-    #     pwd = None
-    # logger.debug(app_configuration)
     environment_folders = app_configuration['application'].get('environment_folder_pattern')
-    logger.debug(f'[BUG] environment_folder  {environment_folders}')
     date_format = app_configuration['application'].get('date_format')
     project_folder = Path(cfg['project_folder'])
     backup_folder = Path(cfg['backup_folder'])
