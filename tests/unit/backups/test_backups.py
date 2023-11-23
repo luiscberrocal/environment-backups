@@ -3,9 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from environment_backups.backups.backups import list_all_projects, get_projects_envs, zip_folder_with_pwd, backup_envs, \
-    backup_environments
+from environment_backups.backups.backups import (list_all_projects, get_projects_envs, zip_folder_with_pwd,
+                                                 backup_envs, backup_environment)
 from environment_backups.exceptions import ConfigurationError
+
 
 # TODO Fix broken tests
 
@@ -78,6 +79,7 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 
     assert zip_file.exists()
 
+
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
     mocker.patch(
@@ -110,6 +112,7 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
     assert b_folder == backup_folder / '20231121_12'
     assert zip_list[0] == backup_folder / '20231121_12/project1.zip'
 
+
 def test_backup_environments_with_valid_configuration(mocker, tmp_path):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
     mocker.patch(
@@ -128,12 +131,13 @@ def test_backup_environments_with_valid_configuration(mocker, tmp_path):
     )
 
     # Call the function
-    zip_list, b_folder = backup_environments('test_env')
+    zip_list, b_folder = backup_environment('test_env')
 
     # Assertions
     assert len(zip_list) == 1
     assert zip_list[0] == Path('/backups/backup.zip')
     assert b_folder == tmp_path / 'backups'
+
 
 def test_backup_environments_with_invalid_configuration(mocker):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name to return None
