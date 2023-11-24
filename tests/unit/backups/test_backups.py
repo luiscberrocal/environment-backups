@@ -1,7 +1,7 @@
-from datetime import datetime
 from pathlib import Path
 
 import pytest
+from freezegun import freeze_time
 
 from environment_backups.backups.backups import (list_all_projects, get_projects_envs, zip_folder_with_pwd,
                                                  backup_envs, backup_environment)
@@ -80,6 +80,7 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
     assert zip_file.exists()
 
 
+@freeze_time("2023-11-02 13:16:12")
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
     mocker.patch(
@@ -90,10 +91,6 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock os.path.exists and Path.mkdir
     mocker.patch.object(Path, 'exists', return_value=True)
     mocker.patch.object(Path, 'mkdir')
-
-    # Mock datetime to control the timestamp
-    mock_dt = mocker.patch('environment_backups.backups.backups.datetime.datetime')
-    mock_dt.now.return_value = datetime(2023, 11, 2, 13, 14)
 
     expected_timestamp = '20231102_13'
 
