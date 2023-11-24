@@ -83,7 +83,7 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
     mocker.patch(
-        'your_module.get_projects_envs',
+        'environment_backups.backups.backups.get_projects_envs',
         return_value={'project1': {'envs': Path('/envs/project1')}}
     )
 
@@ -92,8 +92,10 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
     mocker.patch.object(Path, 'mkdir')
 
     # Mock datetime to control the timestamp
-    mocker.patch('datetime.datetime')
-    datetime.now.return_value.strftime.return_value = '20231121_12'
+    mock_dt = mocker.patch('environment_backups.backups.backups.datetime.datetime')
+    mock_dt.now.return_value = datetime(2023, 11, 2, 13, 14)
+
+    expected_timestamp = '20231102_13'
 
     # Paths for projects folder and backup folder
     projects_folder = Path('/projects')
@@ -109,8 +111,8 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
 
     # Assertions
     assert len(zip_list) == 1
-    assert b_folder == backup_folder / '20231121_12'
-    assert zip_list[0] == backup_folder / '20231121_12/project1.zip'
+    assert b_folder == backup_folder / expected_timestamp
+    assert zip_list[0] == backup_folder / expected_timestamp / 'project1.zip'
 
 
 def test_backup_environments_with_valid_configuration(mocker, tmp_path):
