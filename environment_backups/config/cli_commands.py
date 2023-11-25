@@ -69,6 +69,13 @@ def init():
         CONFIGURATION_MANAGER.save()
 
 
+def set_null_if_blank(value: str) -> str | None:
+    print(f'value {value}')
+    if len(value) == 0:
+        return None
+    return value
+
+
 @click.command()
 def edit():
     click.secho(f'Init configuration file: {CONFIGURATION_MANAGER.config_file}', fg='green')
@@ -89,7 +96,8 @@ def edit():
 
     prompt = 'Default password for zip files'
     configuration_dict['application']['password'] = click.prompt(prompt,
-                                                                 default=configuration_dict['application']['password'])
+                                                                 default=configuration_dict['application']['password'],
+                                                                 value_proc=set_null_if_blank)
     # keep_adding_configs = True
     # while keep_adding_configs:
     #     c = prompt_for_configuration()
