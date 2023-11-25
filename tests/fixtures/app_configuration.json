@@ -11,7 +11,7 @@
             "name": "adelantos",
             "project_folder": "~/adelantos",
             "backup_folder": "~/Documents/adelantos_env",
-            "computer_name": "Kronos",
+            "computer_name": "adl-computer",
             "google_drive_folder_id": "ddd55555",
             "google_authentication_file": ".envs/google_drive/client_secrets.json"
         },
