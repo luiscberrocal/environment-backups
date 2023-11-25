@@ -1,11 +1,12 @@
-from datetime import datetime
 from pathlib import Path
 
 import pytest
+from freezegun import freeze_time
 
-from environment_backups.backups.backups import list_all_projects, get_projects_envs, zip_folder_with_pwd, backup_envs, \
-    backup_environments
+from environment_backups.backups.backups import (list_all_projects, get_projects_envs, zip_folder_with_pwd,
+                                                 backup_envs, backup_environment)
 from environment_backups.exceptions import ConfigurationError
+
 
 # TODO Fix broken tests
 
@@ -78,10 +79,12 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 
     assert zip_file.exists()
 
+
+@freeze_time("2023-11-02 13:16:12")
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
     mocker.patch(
-        'your_module.get_projects_envs',
+        'environment_backups.backups.backups.get_projects_envs',
         return_value={'project1': {'envs': Path('/envs/project1')}}
     )
 
@@ -89,9 +92,7 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
     mocker.patch.object(Path, 'exists', return_value=True)
     mocker.patch.object(Path, 'mkdir')
 
-    # Mock datetime to control the timestamp
-    mocker.patch('datetime.datetime')
-    datetime.now.return_value.strftime.return_value = '20231121_12'
+    expected_timestamp = '20231102_13'
 
     # Paths for projects folder and backup folder
     projects_folder = Path('/projects')
@@ -107,8 +108,9 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
 
     # Assertions
     assert len(zip_list) == 1
-    assert b_folder == backup_folder / '20231121_12'
-    assert zip_list[0] == backup_folder / '20231121_12/project1.zip'
+    assert b_folder == backup_folder / expected_timestamp
+    assert zip_list[0] == backup_folder / expected_timestamp / 'project1.zip'
+
 
 def test_backup_environments_with_valid_configuration(mocker, tmp_path):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
@@ -128,12 +130,13 @@ def test_backup_environments_with_valid_configuration(mocker, tmp_path):
     )
 
     # Call the function
-    zip_list, b_folder = backup_environments('test_env')
+    zip_list, b_folder = backup_environment('test_env')
 
     # Assertions
     assert len(zip_list) == 1
     assert zip_list[0] == Path('/backups/backup.zip')
     assert b_folder == tmp_path / 'backups'
+
 
 def test_backup_environments_with_invalid_configuration(mocker):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name to return None

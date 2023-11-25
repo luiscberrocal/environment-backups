@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from freezegun import freeze_time
 
 from environment_backups.config.configuration import ConfigurationManager
 
@@ -61,6 +62,7 @@ def test_import_from_json(config_manager, tmp_path):
     assert config_manager.get_current() == test_config
 
 
+@freeze_time('2023-11-03 14:15:16')
 def test_backup_creation(config_manager):
     # Initial save to create a configuration file
     initial_config = {'initial': 'config'}
@@ -70,9 +72,10 @@ def test_backup_creation(config_manager):
     # Modify and save again to trigger backup
     new_config = {'new': 'config'}
     config_manager.set_configuration(new_config)
-    backup_path = config_manager.save()
+    config_manager.save()
 
-    assert backup_path.exists()  # Check if backup file was created
+    backup_file = list(config_manager.config_backup_folder.glob('*.toml'))[0]
+    assert backup_file.name == '20231103_141516_configuration.toml'
 
 
 def test_delete_configuration(config_manager):
@@ -105,6 +108,5 @@ def test_set_and_get_configuration(config_manager):
     config_manager.set_configuration(test_config)
 
     assert config_manager.get_current() == test_config
-
 
 # More tests can be added as needed to cover other aspects or edge cases.

@@ -36,5 +36,5 @@ LOGGING = {
             "propagate": False
         },
     },
-    "root": {"level": "DEBUG", "handlers": ["console", ]},
+    "root": {"level": "INFO", "handlers": ["console", ]},
 }

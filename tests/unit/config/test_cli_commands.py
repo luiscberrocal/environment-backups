@@ -1,19 +1,29 @@
 from click.testing import CliRunner
 
-import environment_backups
 from environment_backups.config.cli_commands import config
 
 
-def test_init_existing_values(mocker):
-    mocker.patch(
-        'environment_backups.config.cli_commands.CONFIGURATION_MANAGER.get_current', return_value={'hello': 'world'}
-    )
+def test_init_existing_values(mock_config_manager, tmp_path):
+    mock_config_manager.get_current.return_value = {'config': 'value'}
+    toml_config_file = tmp_path / 'test_config.toml'
+    mock_config_manager.config_file = toml_config_file
+    # mocker.patch(
+    #     'environment_backups.config.cli_commands.CONFIGURATION_MANAGER.get_current', return_value={'hello': 'world'}
+    # )
     runner = CliRunner()
-    result = runner.invoke(environment_backups.config.cli_commands.config, ['init'])
+    result = runner.invoke(config, ['init'])
     output_lines = result.output.split('\n')
 
-    assert len(output_lines) == 1
-    assert output_lines[0] == 'Configuration already exists.'
+    expected_lines = [
+        f"Init configuration file: {toml_config_file}",
+        "Configuration already exists.",
+        ""
+    ]
+
+    assert len(output_lines) == 3
+    for i, line in enumerate(output_lines):
+        assert line == expected_lines[i]
+
     assert result.exit_code == 100
 
 

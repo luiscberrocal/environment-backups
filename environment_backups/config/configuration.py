@@ -14,6 +14,8 @@ class ConfigurationManager:
     APP_NAME = DEFAULT_CONFIG_FOLDER_NAME[1:].replace('_', '-')
 
     def __init__(self, config_root_folder: Optional[Path] = None, config_filename: Optional[str] = None):
+        # TODO Add version to init for use in backups
+
         if config_root_folder is None:
             self.config_folder = Path().home() / self.DEFAULT_CONFIG_FOLDER_NAME
         else:
