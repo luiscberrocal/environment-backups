@@ -65,7 +65,7 @@ def backup_envs(
     password: str = None,
     date_format='%Y%m%d_%H',
 ) -> Tuple[List[Path], Path]:
-    
+
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
     # TODO add computer name to the folder?? or the file??
     timestamp = datetime.now().strftime(date_format)
