@@ -69,8 +69,44 @@ def init():
         CONFIGURATION_MANAGER.save()
 
 
+@click.command()
+def edit():
+    click.secho(f'Init configuration file: {CONFIGURATION_MANAGER.config_file}', fg='green')
+    if not CONFIGURATION_MANAGER.get_current():
+        click.secho(f'Configuration is blank run init.', fg='red')
+        sys.exit(100)
+
+    configuration_dict = CONFIGURATION_MANAGER.get_current()
+
+    prompt = 'Date format for backup folder prefix'
+    configuration_dict['application']['date_format'] = click.prompt(prompt, default=configuration_dict['application'][
+        'date_format'])
+
+    prompt = 'Environment folder pattern name to parse. If several separate by a comma'
+    patterns = ', '.join(configuration_dict['application']['environment_folder_pattern'])
+    env_folders = click.prompt(prompt, default=patterns)
+    configuration_dict['application']['environment_folder_pattern'] = [x.strip() for x in env_folders.split(',')]
+
+    prompt = 'Default password for zip files'
+    configuration_dict['application']['password'] = click.prompt(prompt,
+                                                                 default=configuration_dict['application']['password'])
+    # keep_adding_configs = True
+    # while keep_adding_configs:
+    #     c = prompt_for_configuration()
+    #     configuration_dict['configurations'].append(c)
+    #     keep_adding_configs = click.confirm('Do you want to add another configuration?')
+
+    # pprint(configuration_dict)
+    CONFIGURATION_MANAGER.set_configuration(configuration_dict)
+    save = click.confirm('Save configuration?')
+
+    if save:
+        CONFIGURATION_MANAGER.save()
+
+
 config.add_command(init)
 config.add_command(reset)
+config.add_command(edit)
 
 
 # TODO Add edit configuration functionality
