@@ -74,7 +74,7 @@ config.add_command(reset)
 
 
 # TODO Add edit configuration functionality
-
+# TODO add backup of environment by command environment-backups config backup
 # TODO Add restore backup capabilities
 
 # TODO Add support for password at configurations level
