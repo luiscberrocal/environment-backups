@@ -70,6 +70,7 @@ def init():
 
 
 def set_null_if_blank(value: str) -> str | None:
+    # FIXME setting the value to None it will not write it to the toml file.
     print(f'value {value}')
     if len(value) == 0:
         return None
@@ -98,6 +99,11 @@ def edit():
     configuration_dict['application']['password'] = click.prompt(prompt,
                                                                  default=configuration_dict['application']['password'],
                                                                  value_proc=set_null_if_blank)
+    for env_configuration in configuration_dict['configurations']:
+        prompt = f'Do you want to edit the configuration for {env_configuration["name"]}'
+        edit_env = click.confirm(prompt)
+        if edit_env:
+            prompt_for_configuration(env_configuration)
     # keep_adding_configs = True
     # while keep_adding_configs:
     #     c = prompt_for_configuration()
