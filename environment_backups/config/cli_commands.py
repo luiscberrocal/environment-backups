@@ -145,14 +145,19 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
 
     prompt = 'Computer name'
     # TODO Get computer name from hostname??
-    config_dict['computer_name'] = click.prompt(prompt)
+    default_value = previous_configuration.get('computer_name')
+    config_dict['computer_name'] = click.prompt(prompt, default=default_value)
 
     prompt = 'Google drive support?'
-    google_drive_support = click.confirm(prompt)
+    google_drive_support = click.confirm(prompt, default=default_value)
     if google_drive_support:
         prompt = 'Google drive folder id'
-        config_dict['google_drive_folder_id'] = click.prompt(prompt)
+        default_value = previous_configuration.get('google_drive_folder_id')
+        config_dict['google_drive_folder_id'] = click.prompt(prompt, default=default_value)
+
         prompt = 'Google authentication file'
-        config_dict['google_authentication_file'] = click.prompt(prompt, type=click.Path(exists=False))
+        default_value = previous_configuration.get('google_authentication_file')
+        config_dict['google_authentication_file'] = click.prompt(prompt, type=click.Path(exists=False),
+                                                                 default=default_value)
 
     return config_dict
