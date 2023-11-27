@@ -71,7 +71,7 @@ def init():
 
 def set_null_if_blank(value: str) -> str | None:
     # FIXME setting the value to None it will not write it to the toml file.
-    print(f'value {value}')
+    # print(f'value {value}')
     if len(value) == 0:
         return None
     return value
@@ -96,21 +96,17 @@ def edit():
     configuration_dict['application']['environment_folder_pattern'] = [x.strip() for x in env_folders.split(',')]
 
     prompt = 'Default password for zip files'
+    password = configuration_dict['application'].get('password')
     configuration_dict['application']['password'] = click.prompt(prompt,
-                                                                 default=configuration_dict['application']['password'],
+                                                                 default=password,
                                                                  value_proc=set_null_if_blank)
-    for env_configuration in configuration_dict['configurations']:
+    for i, env_configuration in enumerate(configuration_dict['configurations']):
         prompt = f'Do you want to edit the configuration for {env_configuration["name"]}'
         edit_env = click.confirm(prompt)
         if edit_env:
-            prompt_for_configuration(env_configuration)
-    # keep_adding_configs = True
-    # while keep_adding_configs:
-    #     c = prompt_for_configuration()
-    #     configuration_dict['configurations'].append(c)
-    #     keep_adding_configs = click.confirm('Do you want to add another configuration?')
+            changed_config = prompt_for_configuration(env_configuration)
+            configuration_dict['configurations'][i] = changed_config
 
-    # pprint(configuration_dict)
     CONFIGURATION_MANAGER.set_configuration(configuration_dict)
     save = click.confirm('Save configuration?')
 
