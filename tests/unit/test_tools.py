@@ -14,4 +14,4 @@ def test_create_projects_folder():
     assert projects_folder.exists()
     for project in projects_list:
         assert (projects_folder / project).exists()
-        # TODO check file
+        # TODO check file env content
