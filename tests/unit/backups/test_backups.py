@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 from freezegun import freeze_time
 
-from environment_backups.backups.backups import (list_all_projects, get_projects_envs, zip_folder_with_pwd,
-                                                 backup_envs, backup_environment)
+from environment_backups.backups.backups import (list_all_projects, get_projects_envs, backup_envs, backup_environment)
+from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
 
 
@@ -83,26 +83,34 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 @freeze_time("2023-11-02 13:16:12")
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
-    mocker.patch(
-        'environment_backups.backups.backups.get_projects_envs',
-        return_value={'project1': {'envs': Path('/envs/project1')}}
-    )
+    projects_folder = tmp_path / 'project1'
+    projects_folder.mkdir()
+    env_folder_name = 'envs'
+    env_folder = projects_folder / env_folder_name
+    env_folder.mkdir()
+    config_file = env_folder / 'dummy.txt'
+    config_file.touch()
+
+    # mocker.patch(
+    #     'environment_backups.backups.backups.get_projects_envs',
+    #     return_value={'project1': {'envs': Path('/envs/project1')}}
+    # )
 
     # Mock os.path.exists and Path.mkdir
-    mocker.patch.object(Path, 'exists', return_value=True)
-    mocker.patch.object(Path, 'mkdir')
+    # mocker.patch.object(Path, 'exists', return_value=True)
+    # mocker.patch.object(Path, 'mkdir')
 
     expected_timestamp = '20231102_13'
 
     # Paths for projects folder and backup folder
-    projects_folder = Path('/projects')
     backup_folder = tmp_path / 'backups'
+    backup_folder.mkdir()
 
     # Call the function
     zip_list, b_folder = backup_envs(
         projects_folder=projects_folder,
         backup_folder=backup_folder,
-        environment_folders=['env1', 'env2'],
+        environment_folders=['envs', 'env2'],
         password='password'
     )
 

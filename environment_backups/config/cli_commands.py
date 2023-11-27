@@ -119,7 +119,6 @@ config.add_command(reset)
 config.add_command(edit)
 
 
-# TODO Add edit configuration functionality
 # TODO add backup of environment by command environment-backups config backup
 # TODO Add restore backup capabilities
 
