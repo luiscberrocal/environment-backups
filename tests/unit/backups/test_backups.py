@@ -83,10 +83,12 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 @freeze_time("2023-11-02 13:16:12")
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
-    projects_folder = tmp_path / 'project1'
+    projects_folder = tmp_path / 'projects'
     projects_folder.mkdir()
+
+    project_folder = projects_folder / 'project1'
     env_folder_name = 'envs'
-    env_folder = projects_folder / env_folder_name
+    env_folder = project_folder / env_folder_name
     env_folder.mkdir()
     config_file = env_folder / 'dummy.txt'
     config_file.touch()
