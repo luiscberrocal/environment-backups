@@ -19,8 +19,8 @@ class Configuration(BaseModel):
     projects_folder: Path
     backup_folder: Path
     computer_name: str
-    google_drive_folder_id: Optional[str]
-    google_authentication_file: Optional[Path]
+    google_drive_folder_id: Optional[str] = None
+    google_authentication_file: Optional[Path] = None
 
 
 class ApplicationConfiguration(BaseModel):

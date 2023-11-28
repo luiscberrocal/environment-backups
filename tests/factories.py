@@ -88,7 +88,7 @@ def configuration_factory(*, projects_folder: Path, backup_folder: Path = None,
         if google_support:
             cfg.google_drive_folder_id = 'ddg'
             cfg.google_authentication_file = projects_folder / f'dummy_google_{i}.json'
-            configs.append(cfg)
-    application_configuration = ApplicationConfiguration(application=app, configuration=configs)
+        configs.append(cfg)
+    application_configuration = ApplicationConfiguration(application=app, configurations=configs)
 
     return application_configuration
