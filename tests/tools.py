@@ -69,21 +69,26 @@ def create_projects_folder_for_tests(*, root_folder: Path,
 
 
 def build_valid_configuration_for_tests(*, projects_folder: Path, backup_folder: Path = None,
+                                        configs_count: int = 1,
                                         google_support: bool = True) -> ApplicationConfiguration:
+    projects_folder.mkdir()
     if backup_folder is None:
         backup_folder = projects_folder / 'environment_backups'
+    backup_folder.mkdir()
 
     app = Application()
-    config_name = 'test_config'
+    configs = []
+    for i in range(configs_count):
+        config_name = f'test_config_{i}'
 
-    cfg = Configuration(name=config_name,
-                        projects_folder=projects_folder,
-                        backup_folder=backup_folder,
-                        computer_name='deep-space9')
-    if google_support:
-        cfg.google_drive_folder_id = 'ddg'
-        cfg.google_authentication_file = projects_folder / 'dummy_google.json'
-
-    application_configuration = ApplicationConfiguration(application=app, configuration=[cfg])
+        cfg = Configuration(name=config_name,
+                            projects_folder=projects_folder,
+                            backup_folder=backup_folder,
+                            computer_name=f'deep-space9_{i}')
+        if google_support:
+            cfg.google_drive_folder_id = 'ddg'
+            cfg.google_authentication_file = projects_folder / f'dummy_google_{i}.json'
+            configs.append(cfg)
+    application_configuration = ApplicationConfiguration(application=app, configuration=configs)
 
     return application_configuration

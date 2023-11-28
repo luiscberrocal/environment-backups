@@ -1,13 +1,11 @@
 import shutil
-from pathlib import Path
 
-import pytest
-
+from environment_backups.constants import DEFAULT_DATE_FORMAT
 from tests.tools import create_projects_folder_for_tests, build_valid_configuration_for_tests
 
 
 def test_create_projects_folder(tmp_path):
-    root_folder = tmp_path # Path(__file__).parent.parent.parent / 'output'
+    root_folder = tmp_path  # Path(__file__).parent.parent.parent / 'output'
     assert root_folder.exists()
     projects_list = ['project1', 'project2']
     projects_folder, config_files = create_projects_folder_for_tests(root_folder=root_folder,
@@ -22,6 +20,18 @@ def test_create_projects_folder(tmp_path):
         assert config_file.exists()
     shutil.rmtree(projects_folder)
 
-def test_build_valid_configuration_for_tests():
-    config = build_valid_configuration_for_tests()
-    pytest.fail('Not implemented')
+
+def test_build_valid_configuration_for_tests(tmp_path):
+    projects_folder = tmp_path / 'MyProjectsFolder'
+
+    config = build_valid_configuration_for_tests(projects_folder=projects_folder)
+    assert config.application.date_format == DEFAULT_DATE_FORMAT
+    assert config.application.password is None
+    assert config.application.environment_folder_pattern == ['.envs']
+    assert len(config.configurations) == 1
+    assert config.configurations[0].projects_folder.exists()
+    assert config.configurations[0].backup_folder.exists()
+    assert config.configurations[0].computer_name is not None
+    assert config.configurations[0].name is not None
+    assert config.configurations[0].google_drive_folder_id is not None
+    assert config.configurations[0].google_authentication_file is not None
