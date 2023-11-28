@@ -3,6 +3,7 @@ from click.testing import CliRunner
 
 from environment_backups.config.cli_commands import config
 from environment_backups.constants import DEFAULT_DATE_FORMAT
+from tests.factories import configuration_factory
 
 
 def test_init_existing_values(mock_config_manager, tmp_path):
@@ -57,6 +58,9 @@ def test_reset_delete(mock_config_manager):
     assert 'Configuration file deleted. A backup was created ' in lines[1]
 
 
-def test_edit_configuration():
-    inputs = [DEFAULT_DATE_FORMAT, '.envs', '', ]
+def test_edit_configuration(tmp_path):
+    projects_folder = tmp_path / 'MyProjects'
+    app_configuration = configuration_factory(projects_folder=projects_folder)
+    new_config_name = f'{app_configuration.configurations[0].name}-1223'
+    inputs = [DEFAULT_DATE_FORMAT, '.envs', '', 'Y', new_config_name, "", "", ""]
     pytest.fail('Not implemented')

@@ -125,8 +125,10 @@ config.add_command(edit)
 # TODO Add support for password at configurations level
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
+    is_new = False
     if previous_configuration is None:
         previous_configuration = {}
+        is_new = True
 
     config_dict = {}
 
@@ -148,8 +150,13 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
     default_value = previous_configuration.get('computer_name')
     config_dict['computer_name'] = click.prompt(prompt, default=default_value)
 
-    prompt = 'Google drive support?'
-    google_drive_support = click.confirm(prompt, default=default_value)
+    if is_new:
+        prompt = 'Google drive support?'
+        google_drive_support = click.confirm(prompt, default=default_value)
+    else:
+        google_drive_support = previous_configuration.get('google_drive_folder_id') or previous_configuration.get(
+            'google_authentication_file')
+
     if google_drive_support:
         prompt = 'Google drive folder id'
         default_value = previous_configuration.get('google_drive_folder_id')
