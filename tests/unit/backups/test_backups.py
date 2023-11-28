@@ -6,6 +6,7 @@ from freezegun import freeze_time
 from environment_backups.backups.backups import (list_all_projects, get_projects_envs, backup_envs, backup_environment)
 from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
+from tests.tools import create_projects_folder_for_tests
 
 
 # TODO Fix broken tests
@@ -83,16 +84,7 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 @freeze_time("2023-11-02 13:16:12")
 def test_backup_envs_with_valid_data(mocker, tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
-    projects_folder = tmp_path / 'projects'
-    projects_folder.mkdir()
-
-    project_folder = projects_folder / 'project1'
-    env_folder_name = 'envs'
-    env_folder = project_folder / env_folder_name
-    env_folder.mkdir()
-    config_file = env_folder / 'dummy.txt'
-    config_file.touch()
-
+    projects_folder, _ = create_projects_folder_for_tests(root_folder=tmp_path)
     # mocker.patch(
     #     'environment_backups.backups.backups.get_projects_envs',
     #     return_value={'project1': {'envs': Path('/envs/project1')}}
@@ -112,14 +104,15 @@ def test_backup_envs_with_valid_data(mocker, tmp_path):
     zip_list, b_folder = backup_envs(
         projects_folder=projects_folder,
         backup_folder=backup_folder,
-        environment_folders=['envs', 'env2'],
-        password='password'
+        environment_folders=['.envs'],
+        password=None
     )
 
     # Assertions
     assert len(zip_list) == 1
     assert b_folder == backup_folder / expected_timestamp
     assert zip_list[0] == backup_folder / expected_timestamp / 'project1.zip'
+    assert zip_list[0].exists()
 
 
 def test_backup_environments_with_valid_configuration(mocker, tmp_path):
