@@ -62,5 +62,5 @@ def test_edit_configuration(tmp_path):
     projects_folder = tmp_path / 'MyProjects'
     app_configuration = configuration_factory(projects_folder=projects_folder)
     new_config_name = f'{app_configuration.configurations[0].name}-1223'
-    inputs = [DEFAULT_DATE_FORMAT, '.envs', '', 'Y', new_config_name, "", "", ""]
+    inputs = [DEFAULT_DATE_FORMAT, '.envs', '', 'Y', new_config_name, "", "", "", "", "", 'Y']
     pytest.fail('Not implemented')
