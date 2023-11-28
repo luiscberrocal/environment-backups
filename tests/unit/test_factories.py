@@ -1,7 +1,7 @@
 import shutil
 
 from environment_backups.constants import DEFAULT_DATE_FORMAT
-from tests.tools import create_projects_folder_for_tests, build_valid_configuration_for_tests
+from tests.factories import create_projects_folder_for_tests, configuration_factory
 
 
 def test_create_projects_folder(tmp_path):
@@ -24,7 +24,7 @@ def test_create_projects_folder(tmp_path):
 def test_build_valid_configuration_for_tests(tmp_path):
     projects_folder = tmp_path / 'MyProjectsFolder'
 
-    config = build_valid_configuration_for_tests(projects_folder=projects_folder)
+    config = configuration_factory(projects_folder=projects_folder)
     assert config.application.date_format == DEFAULT_DATE_FORMAT
     assert config.application.password is None
     assert config.application.environment_folder_pattern == ['.envs']

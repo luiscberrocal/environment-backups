@@ -2,6 +2,7 @@ import pytest
 from click.testing import CliRunner
 
 from environment_backups.config.cli_commands import config
+from environment_backups.constants import DEFAULT_DATE_FORMAT
 
 
 def test_init_existing_values(mock_config_manager, tmp_path):
@@ -29,8 +30,9 @@ def test_init_existing_values(mock_config_manager, tmp_path):
 def test_init_command(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
+    input_list = ['%Y-%m-%d', '.envs', '', 'my_config_name', str(tmp_path), str(tmp_path), "my_computer_name", 'N', 'N', 'y']
     mock_inputs = '\n'.join(
-        ['%Y-%m-%d', '.envs', '', 'my_config_name', str(tmp_path), str(tmp_path), "my_computer_name", 'N', 'N', 'y']
+        input_list
     )
     result = runner.invoke(config, ['init'], input=mock_inputs)
 
@@ -56,5 +58,5 @@ def test_reset_delete(mock_config_manager):
 
 
 def test_edit_configuration():
-    inputs = []
+    inputs = [DEFAULT_DATE_FORMAT, '.envs', '', ]
     pytest.fail('Not implemented')

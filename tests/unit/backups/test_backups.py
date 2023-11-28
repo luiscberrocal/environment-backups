@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from environment_backups.backups.backups import (list_all_projects, get_projects_envs, backup_envs, backup_environment)
 from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
-from tests.tools import create_projects_folder_for_tests
+from tests.factories import create_projects_folder_for_tests
 
 
 # TODO Fix broken tests
