@@ -7,9 +7,7 @@ def test_init_existing_values(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {'config': 'value'}
     toml_config_file = tmp_path / 'test_config.toml'
     mock_config_manager.config_file = toml_config_file
-    # mocker.patch(
-    #     'environment_backups.config.cli_commands.CONFIGURATION_MANAGER.get_current', return_value={'hello': 'world'}
-    # )
+
     runner = CliRunner()
     result = runner.invoke(config, ['init'])
     output_lines = result.output.split('\n')
@@ -54,3 +52,7 @@ def test_reset_delete(mock_config_manager):
     assert len(lines) == 3
     assert 'By resetting the configuration the' in lines[0]
     assert 'Configuration file deleted. A backup was created ' in lines[1]
+
+
+def test_edit_configuration():
+    inputs = []
