@@ -1,3 +1,4 @@
+import pytest
 from click.testing import CliRunner
 
 from environment_backups.config.cli_commands import config
@@ -56,3 +57,4 @@ def test_reset_delete(mock_config_manager):
 
 def test_edit_configuration():
     inputs = []
+    pytest.fail('Not implemented')
