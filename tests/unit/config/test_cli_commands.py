@@ -48,7 +48,7 @@ def test_init_command(mock_config_manager, tmp_path):
 def test_reset_delete(mock_config_manager):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
-    mock_inputs = '\n'.join(['Y'])
+    mock_inputs = '\n'.join(['y'])
     result = runner.invoke(config, ['reset'], input=mock_inputs)
 
     assert result.exit_code == 0
@@ -59,8 +59,18 @@ def test_reset_delete(mock_config_manager):
 
 
 def test_edit_configuration(tmp_path):
+    runner = CliRunner()
     projects_folder = tmp_path / 'MyProjects'
     app_configuration = configuration_factory(projects_folder=projects_folder)
+
     new_config_name = f'{app_configuration.configurations[0].name}-1223'
     inputs = [DEFAULT_DATE_FORMAT, '.envs', '', 'Y', new_config_name, "", "", "", "", "", 'Y']
+
+    mock_inputs = '\n'.join(inputs)
+    result = runner.invoke(config, ['edit'], input=mock_inputs)
+
+    assert result.exit_code == 0
+    lines = result.output.split('\n')
+    assert len(lines) == 10
+
     pytest.fail('Not implemented')
