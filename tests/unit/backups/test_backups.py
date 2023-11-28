@@ -82,17 +82,9 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 
 
 @freeze_time("2023-11-02 13:16:12")
-def test_backup_envs_with_valid_data(mocker, tmp_path):
+def test_backup_envs_with_valid_data(tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
     projects_folder, _ = create_projects_folder_for_tests(root_folder=tmp_path)
-    # mocker.patch(
-    #     'environment_backups.backups.backups.get_projects_envs',
-    #     return_value={'project1': {'envs': Path('/envs/project1')}}
-    # )
-
-    # Mock os.path.exists and Path.mkdir
-    # mocker.patch.object(Path, 'exists', return_value=True)
-    # mocker.patch.object(Path, 'mkdir')
 
     expected_timestamp = '20231102_13'
 

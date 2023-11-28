@@ -123,7 +123,6 @@ config.add_command(edit)
 # TODO Add restore backup capabilities
 
 # TODO Add support for password at configurations level
-# TODO Add schemas for configuration
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
     if previous_configuration is None:
