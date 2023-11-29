@@ -100,6 +100,7 @@ def edit():
     configuration_dict['application']['password'] = click.prompt(prompt,
                                                                  default=password,
                                                                  value_proc=set_null_if_blank)
+
     for i, env_configuration in enumerate(configuration_dict['configurations']):
         prompt = f'Do you want to edit the configuration for {env_configuration["name"]}'
         edit_env = click.confirm(prompt)

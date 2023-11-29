@@ -33,7 +33,7 @@ def config_manager(tmp_path) -> ConfigurationManager:
 
 
 @pytest.fixture
-def mock_config_manager(mocker):
+def mock_config_manager(mocker) -> MagicMock:
     # Create a MagicMock object to mock CONFIGURATION_MANAGER
     mock_manager = MagicMock()
     # Replace CONFIGURATION_MANAGER with the mock object
