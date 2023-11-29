@@ -101,12 +101,12 @@ def test_edit_configuration1(tmp_path: Path, mock_config_manager: MagicMock):
     runner = CliRunner()
 
     projects_folder = tmp_path / 'MyProjects'
-    app_configuration = configuration_factory(projects_folder=projects_folder)
+    app_configuration = configuration_factory(projects_folder=projects_folder, google_support=True)
     mock_config_manager.get_current.return_value = app_configuration.model_dump()
     mock_config_manager.config_file = tmp_path / 'test_config.toml'
 
     new_config_name = f'{app_configuration.configurations[0].name}-1223'
-    inputs = [DEFAULT_DATE_FORMAT, '.envs', '', 'Y', new_config_name, "", "", "", "", "", 'Y']
+    inputs = ['%Y-%m-%d', '.envs', 'pwd', 'Y', new_config_name, "", "", "", "", "", 'Y']
     mock_inputs = '\n'.join(inputs)
     result = runner.invoke(config, ['edit'], input=mock_inputs)
 
