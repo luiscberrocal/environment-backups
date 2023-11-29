@@ -1,12 +1,13 @@
-import click
-from click.testing import CliRunner
-import pytest
 from unittest.mock import MagicMock, patch
 
+import pytest
+from click.testing import CliRunner
+
 from environment_backups.config.cli_commands import edit
+from tests.factories import configuration_factory
 
 
-def test_edit_command():
+def test_edit_command(tmp_path):
     """
     Test the 'edit' command of the CLI application.
 
@@ -25,13 +26,19 @@ def test_edit_command():
         },
         'configurations': [{'name': 'config1'}]
     }
+
+    projects_folder = tmp_path / 'MyProjects'
+    app_configuration = configuration_factory(projects_folder=projects_folder, google_support=False)
+    app_configuration_dict = app_configuration.model_dump()
+    mock_config_manager.get_current.return_value = app_configuration_dict
+
     mock_config_manager.config_file = '/path/to/config.toml'
 
     # Simulate user inputs
-    inputs = ['YYYY-MM-DD', 'pattern1, pattern3', 'new_password', 'y', 'n', 'y']
+    inputs = ['YYYY-MM-DD', 'pattern1, pattern3', 'new_password', 'y', '', '', '', '', 'y']
     mock_inputs = '\n'.join(inputs)
 
-    with patch('environment_backups.CONFIGURATION_MANAGER', mock_config_manager):
+    with patch('environment_backups.config.cli_commands.CONFIGURATION_MANAGER', mock_config_manager):
         runner = CliRunner()
         result = runner.invoke(edit, input=mock_inputs)
 
@@ -41,10 +48,12 @@ def test_edit_command():
     mock_config_manager.set_configuration.assert_called_once()
     mock_config_manager.save.assert_called_once()
 
+
 @pytest.fixture
 def runner():
     """Fixture to provide a click test runner."""
     return CliRunner()
+
 
 @pytest.fixture
 def mock_config_manager():
