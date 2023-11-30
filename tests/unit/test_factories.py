@@ -1,15 +1,15 @@
 import shutil
 
 from environment_backups.constants import DEFAULT_DATE_FORMAT
-from tests.factories import create_projects_folder_for_tests, configuration_factory
+from tests.factories import projects_folder_tree_factory, configuration_factory
 
 
 def test_create_projects_folder(tmp_path):
     root_folder = tmp_path  # Path(__file__).parent.parent.parent / 'output'
     assert root_folder.exists()
     projects_list = ['project1', 'project2']
-    projects_folder, config_files = create_projects_folder_for_tests(root_folder=root_folder,
-                                                                     projects_folders=projects_list)
+    projects_folder, config_files = projects_folder_tree_factory(root_folder=root_folder,
+                                                                 projects_folders=projects_list)
 
     projects_folder = root_folder / 'MyProjectsForTests'
     assert projects_folder.exists()

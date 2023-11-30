@@ -4,13 +4,14 @@ from typing import List, Tuple
 from environment_backups.config.schemas import Application, Configuration, ApplicationConfiguration
 
 
-def create_projects_folder_for_tests(*, root_folder: Path,
-                                     projects_folder_name: str = 'MyProjectsForTests',
-                                     projects_folders: List[str] = None,
-                                     env_folders: List[str] = None,
-                                     env_file_count: int = 1) -> Tuple[Path, List[Path]]:
+def projects_folder_tree_factory(*, root_folder: Path,
+                                 projects_folder_name: str = 'MyProjectsForTests',
+                                 projects_folders: List[str] = None,
+                                 env_folders: List[str] = None,
+                                 env_file_count: int = 1) -> Tuple[Path, List[Path]]:
     """
-      Creates a nested directory structure for testing, including project and environment folders.
+      Creates a nested directory structure for testing, including project and environment folders. For test
+      prefer using tmp_path for root_folder
 
       @param root_folder: The root directory where the projects folder will be created.
       @type root_folder: Path
