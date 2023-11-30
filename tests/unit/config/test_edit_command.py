@@ -18,18 +18,10 @@ def test_edit_command(tmp_path):
     """
     # Mock CONFIGURATION_MANAGER
     mock_config_manager = MagicMock()
-    mock_config_manager.get_current.return_value = {
-        'application': {
-            'date_format': 'YYYY-MM-DD',
-            'environment_folder_pattern': ['pattern1', 'pattern2'],
-            'password': 'old_password'
-        },
-        'configurations': [{'name': 'config1'}]
-    }
-
+    
     projects_folder = tmp_path / 'MyProjects'
     app_configuration = configuration_factory(projects_folder=projects_folder, google_support=False)
-    app_configuration_dict = app_configuration.model_dump()
+    app_configuration_dict = app_configuration.model_dump(mode='json')
     mock_config_manager.get_current.return_value = app_configuration_dict
 
     mock_config_manager.config_file = '/path/to/config.toml'

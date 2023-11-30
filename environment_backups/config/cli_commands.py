@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 from typing import Any, Dict
 
 import click
@@ -139,7 +140,7 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
 
     # TODO Allow using ~/PycharmProjects for example
     prompt = 'Project folder'
-    default_value = previous_configuration.get('project_folder')
+    default_value = previous_configuration.get('projects_folder')
     config_dict['project_folder'] = click.prompt(prompt, type=click.Path(exists=True), default=default_value)
 
     prompt = 'Backup folder'
