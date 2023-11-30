@@ -7,9 +7,7 @@ def test_init_existing_values(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {'config': 'value'}
     toml_config_file = tmp_path / 'test_config.toml'
     mock_config_manager.config_file = toml_config_file
-    # mocker.patch(
-    #     'environment_backups.config.cli_commands.CONFIGURATION_MANAGER.get_current', return_value={'hello': 'world'}
-    # )
+
     runner = CliRunner()
     result = runner.invoke(config, ['init'])
     output_lines = result.output.split('\n')
@@ -30,8 +28,10 @@ def test_init_existing_values(mock_config_manager, tmp_path):
 def test_init_command(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
+    input_list = ['%Y-%m-%d', '.envs', '', 'my_config_name', str(tmp_path), str(tmp_path), "my_computer_name", 'N', 'N',
+                  'y']
     mock_inputs = '\n'.join(
-        ['%Y-%m-%d', '.envs', '', 'my_config_name', str(tmp_path), str(tmp_path), "my_computer_name", 'N', 'N', 'y']
+        input_list
     )
     result = runner.invoke(config, ['init'], input=mock_inputs)
 
@@ -46,7 +46,7 @@ def test_init_command(mock_config_manager, tmp_path):
 def test_reset_delete(mock_config_manager):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
-    mock_inputs = '\n'.join(['Y'])
+    mock_inputs = '\n'.join(['y'])
     result = runner.invoke(config, ['reset'], input=mock_inputs)
 
     assert result.exit_code == 0

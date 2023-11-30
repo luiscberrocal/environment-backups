@@ -4,9 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
-
 from environment_backups import CONFIGURATION_MANAGER
+from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import ConfigurationError
 
@@ -28,33 +27,6 @@ def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> D
             if envs.exists():
                 folder_dict[path.name] = {'envs': envs}
     return folder_dict
-
-
-def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
-    """
-    Compresses a folder and creates a zip file with optional password protection.
-    @param zip_file:
-    @param folder_to_zip:
-    @param password:
-    """
-
-    def zipdir(path: Path, ziph):
-        """
-        Recursively adds files and directories to a zip file.
-        """
-
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                file_path = os.path.join(root, file)
-                ziph.write(file_path, os.path.relpath(file_path, path.parent))
-
-    encryption = WZ_AES if password else None
-
-    with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption) as zf:
-        if password:
-            pwd = password.encode('utf-8')
-            zf.setpassword(pwd)
-        zipdir(folder_to_zip, zf)
 
 
 # TODO Add * to force use of names.

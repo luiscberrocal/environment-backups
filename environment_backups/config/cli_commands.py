@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 from typing import Any, Dict
 
 import click
@@ -100,6 +101,7 @@ def edit():
     configuration_dict['application']['password'] = click.prompt(prompt,
                                                                  default=password,
                                                                  value_proc=set_null_if_blank)
+
     for i, env_configuration in enumerate(configuration_dict['configurations']):
         prompt = f'Do you want to edit the configuration for {env_configuration["name"]}'
         edit_env = click.confirm(prompt)
@@ -119,16 +121,16 @@ config.add_command(reset)
 config.add_command(edit)
 
 
-# TODO Add edit configuration functionality
 # TODO add backup of environment by command environment-backups config backup
 # TODO Add restore backup capabilities
 
 # TODO Add support for password at configurations level
-# TODO Add schemas for configuration
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
+    is_new = False
     if previous_configuration is None:
         previous_configuration = {}
+        is_new = True
 
     config_dict = {}
 
@@ -138,7 +140,7 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
 
     # TODO Allow using ~/PycharmProjects for example
     prompt = 'Project folder'
-    default_value = previous_configuration.get('project_folder')
+    default_value = previous_configuration.get('projects_folder')
     config_dict['project_folder'] = click.prompt(prompt, type=click.Path(exists=True), default=default_value)
 
     prompt = 'Backup folder'
@@ -150,8 +152,13 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
     default_value = previous_configuration.get('computer_name')
     config_dict['computer_name'] = click.prompt(prompt, default=default_value)
 
-    prompt = 'Google drive support?'
-    google_drive_support = click.confirm(prompt, default=default_value)
+    if is_new:
+        prompt = 'Google drive support?'
+        google_drive_support = click.confirm(prompt, default=default_value)
+    else:
+        google_drive_support = previous_configuration.get('google_drive_folder_id') or previous_configuration.get(
+            'google_authentication_file')
+
     if google_drive_support:
         prompt = 'Google drive folder id'
         default_value = previous_configuration.get('google_drive_folder_id')

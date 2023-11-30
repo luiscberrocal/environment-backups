@@ -3,9 +3,10 @@ from pathlib import Path
 import pytest
 from freezegun import freeze_time
 
-from environment_backups.backups.backups import (list_all_projects, get_projects_envs, zip_folder_with_pwd,
-                                                 backup_envs, backup_environment)
+from environment_backups.backups.backups import (list_all_projects, get_projects_envs, backup_envs, backup_environment)
+from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
+from tests.factories import projects_folder_tree_factory
 
 
 # TODO Fix broken tests
@@ -81,53 +82,34 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 
 
 @freeze_time("2023-11-02 13:16:12")
-def test_backup_envs_with_valid_data(mocker, tmp_path):
+def test_backup_envs_with_valid_data(tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
-    mocker.patch(
-        'environment_backups.backups.backups.get_projects_envs',
-        return_value={'project1': {'envs': Path('/envs/project1')}}
-    )
-
-    # Mock os.path.exists and Path.mkdir
-    mocker.patch.object(Path, 'exists', return_value=True)
-    mocker.patch.object(Path, 'mkdir')
+    projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path)
 
     expected_timestamp = '20231102_13'
 
     # Paths for projects folder and backup folder
-    projects_folder = Path('/projects')
     backup_folder = tmp_path / 'backups'
+    backup_folder.mkdir()
 
     # Call the function
     zip_list, b_folder = backup_envs(
         projects_folder=projects_folder,
         backup_folder=backup_folder,
-        environment_folders=['env1', 'env2'],
-        password='password'
+        environment_folders=['.envs'],
+        password=None
     )
 
     # Assertions
     assert len(zip_list) == 1
     assert b_folder == backup_folder / expected_timestamp
     assert zip_list[0] == backup_folder / expected_timestamp / 'project1.zip'
+    assert zip_list[0].exists()
 
 
-def test_backup_environments_with_valid_configuration(mocker, tmp_path):
+def test_backup_environments_with_valid_configuration(tmp_path):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
-    mocker.patch(
-        'your_module.CONFIGURATION_MANAGER.get_current',
-        return_value={'password': 'password', 'env_folder_pattern': ['env'], 'date_format': '%Y%m%d_%H'}
-    )
-    mocker.patch(
-        'your_module.get_configuration_by_name',
-        return_value=({'project_folder': '/projects', 'backup_folder': str(tmp_path / 'backups')}, None)
-    )
-
-    # Mock backup_envs
-    mocker.patch(
-        'your_module.backup_envs',
-        return_value=([Path('/backups/backup.zip')], tmp_path / 'backups')
-    )
+    projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path, projects_folder_name='PycharmProjects')
 
     # Call the function
     zip_list, b_folder = backup_environment('test_env')
