@@ -7,7 +7,9 @@ CLI Application to backup environment variables.
 
 # Installation
 
-
+```shell
+pip intall environment-backups
+```
 # Examples
 
 
