@@ -133,10 +133,11 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
         is_new = True
 
     config_dict = {}
-
+    # TODO Verify the the name is not repeated
     prompt = 'Name of the configuration. Must be unique'
     default_value = previous_configuration.get('name')
     config_dict['name'] = click.prompt(prompt, default=default_value)
+
 
     # TODO Allow using ~/PycharmProjects for example
     prompt = 'Project folder'
