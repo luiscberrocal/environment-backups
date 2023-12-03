@@ -1,5 +1,3 @@
-import json
-import pickle
 from pathlib import Path
 from typing import Optional
 
@@ -8,8 +6,10 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from rich.pretty import pprint
 
 from environment_backups.exceptions import UploadError
+from environment_backups.google_drive.gdrive_schemas import GoogleCredentialsToken
 
 
 class GDrive:
@@ -22,22 +22,10 @@ class GDrive:
         self.service = build('drive', 'v3', credentials=creds)
 
     def get_g_drive_credentials(self, token_file: Path) -> Credentials:
-        creds = None
-        # The file token.pickle stores the
-        # user's access and refresh tokens. It is
-        # created automatically when the authorization
-        # flow completes for the first time.
-        # Check if file token.pickle exists
-        if token_file.exists():
-            # Read the token from the file and
-            # store it in the variable creds
-            # TODO test for age of token. If token is older than 2 weeks?? don't load it.
-            with open(token_file, 'rb') as token:
-                creds = pickle.load(token)
-        # If no valid credentials are available,
-        # request the user to log in.
-        if not creds or not creds.valid:
+        token = GoogleCredentialsToken(token_file=token_file)
+        creds = token.get_token()
 
+        if not creds or not creds.valid:
             # If token is expired, it will be refreshed,
             # else, we will request a new one.
             if creds and creds.expired and creds.refresh_token:
@@ -45,11 +33,7 @@ class GDrive:
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(str(self.secrets_file), self.SCOPES)
                 creds = flow.run_local_server(port=0)
-
-            # Save the access token in token.pickle
-            # file for future usage
-            with open(token_file, 'wb') as token:
-                pickle.dump(creds, token)
+            token.save(creds)
         return creds
 
     def upload(self, file_to_upload: Path, folder_id: str):
@@ -109,12 +93,29 @@ class GDrive:
         query = f"'{parent_folder_id}' in parents"
 
         # Fetch files and folders from the Google Drive API
-        response = self.service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
+        # response = self.service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
+        # Reference https://developers.google.com/drive/api/reference/rest/v3/files
+        file_attributes = [
+            'id',
+            'name',
+            'starred',
+            'shared',
+            'permissions(kind,type,role)',
+            'mimeType',
+            'fileExtension'
+        ]
+        file_fields = ', '.join(file_attributes).strip()
+        print(f'>>> {file_fields}')
+        fields_definition = f"nextPageToken, files({file_fields})"
+        # fields_definition = "nextPageToken, files(id, name)"
+        response = self.service.files().list(q=query,
+                                             fields=fields_definition).execute()
 
         # Extract the file names and IDs
         items = response.get('files', [])
         for item in items:
-            results.append({'name': item.get('name'), 'id': item.get('id')})
+            # results.append({'name': item.get('name'), 'id': item.get('id')})
+            results.append(item)
 
         # Handle pagination
         while 'nextPageToken' in response:
@@ -126,7 +127,8 @@ class GDrive:
             )
             items = response.get('files', [])
             for item in items:
-                results.append({'name': item.get('name'), 'id': item.get('id')})
+                # results.append({'name': item.get('name'), 'id': item.get('id')})
+                results.append(item)
 
         return results
 
@@ -137,3 +139,8 @@ if __name__ == '__main__':
         raise Exception(f'{sec_file} not found.')
 
     gdrive = GDrive(secrets_file=sec_file)
+    folder_id = '1nVh5_8SfU5a9wxGdgwyOkpNQC6tJ4qTF'
+    results = gdrive.list_content(folder_id)
+    for r in results:
+        pprint(r)
+        print('-' * 80)
