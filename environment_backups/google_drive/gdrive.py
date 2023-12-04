@@ -102,7 +102,8 @@ class GDrive:
             'shared',
             'permissions(kind,type,role)',
             'mimeType',
-            'fileExtension'
+            'fileExtension',
+            'size'
         ]
         file_fields = ', '.join(file_attributes).strip()
         print(f'>>> {file_fields}')
