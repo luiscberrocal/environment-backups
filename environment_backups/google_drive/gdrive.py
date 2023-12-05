@@ -16,6 +16,7 @@ class GDrive:
     SCOPES = ['https://www.googleapis.com/auth/drive']
 
     def __init__(self, secrets_file: Path):
+        # FIXME raise error if secrets_file does not exist
         self.secrets_file = secrets_file
         token_file = secrets_file.parent / 'token.pickle'
         creds = self.get_g_drive_credentials(token_file)
