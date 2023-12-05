@@ -111,16 +111,6 @@ class GDrive:
         # fields_definition = "nextPageToken, files(id, name)"
         response = self.service.files().list(q=query,
                                              fields=fields_definition).execute()
-        # ------------------------------
-        var_name = 'response'
-        var_value = eval(var_name)
-        from pathlib import Path
-        import json
-        file = Path(__name__).parent / f'_{var_name}_list_files.json'
-        with open(file, 'w') as f:
-            json.dump(var_value, f, indent=4)
-        print(f'Saved file {file}')
-        # ------------------------------------
 
         # Extract the file names and IDs
         items = response.get('files', [])
