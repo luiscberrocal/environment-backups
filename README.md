@@ -1,8 +1,5 @@
 # Environment backups
 
-
-
-
 CLI Application to backup environment variables.
 
 # Installation
@@ -10,6 +7,13 @@ CLI Application to backup environment variables.
 ```shell
 pip intall environment-backups
 ```
+
+# Configuration
+
+```shell
+environment-backups config init
+```
+
 # Examples
 
 

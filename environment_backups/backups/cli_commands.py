@@ -7,6 +7,7 @@ from environment_backups import CONFIGURATION_MANAGER
 from environment_backups.backups.backups import backup_envs, backup_environment
 from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import EnvironmentBackupsError
+from environment_backups.google_drive.gdrive import GDrive
 
 
 @click.command()
@@ -24,6 +25,12 @@ def backup(environment: str, projects_folder: Path, backup_folder: Path):
 
         for i, zip_file in enumerate(zip_list, 1):
             click.secho(f'{i:3}. {zip_file.name}', fg='green')
+
+        if env_cfg.get('google_drive_folder_id'):
+            secrets_file = Path(env_cfg.get('google_authentication_file'))
+            gdrive = GDrive(secrets_file=secrets_file)
+            gdrive.upload_folder(b_folder, env_cfg['google_drive_folder_id'])
+            click.secho(f'Uploaded {b_folder} to google drive')
 
     else:
         legacy_backup(backup_folder, projects_folder)

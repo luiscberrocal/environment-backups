@@ -1,4 +1,4 @@
-from environment_backups.backups.gdrive_schemas import Installed
+from environment_backups.google_drive.gdrive_schemas import Installed
 
 
 class TestGoogleConfiguration:

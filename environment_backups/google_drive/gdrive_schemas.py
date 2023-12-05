@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import pickle
 import re
-from typing import List
+from pathlib import Path
+from typing import List, Optional
 
+from google.oauth2.credentials import Credentials
 from pydantic import AnyHttpUrl, BaseModel, Field, HttpUrl, ValidationError
 from pydantic.functional_validators import AfterValidator
 from typing_extensions import Annotated
@@ -32,3 +35,23 @@ class Installed(BaseModel):
 
 class GoogleConfiguration(BaseModel):
     installed: Installed
+
+
+class GoogleCredentialsToken(BaseModel):
+    token_file: Path
+    max_age_days: Optional[int] = 15
+
+    def get_token(self) -> Credentials | None:
+        creds = None
+        if self.token_file.exists():
+            # TODO test for age of token. If token is older than 2 weeks?? don't load it.
+            with open(self.token_file, 'rb') as token:
+                creds = pickle.load(token)
+
+        return creds
+
+    def save(self, creds: Credentials):
+        with open(self.token_file, 'wb') as token:
+            pickle.dump(creds, token)
+
+

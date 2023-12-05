@@ -1,42 +1,32 @@
-import json
-import pickle
 from pathlib import Path
 from typing import Optional
 
 from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
+from rich.pretty import pprint
 
 from environment_backups.exceptions import UploadError
+from environment_backups.google_drive.gdrive_schemas import GoogleCredentialsToken
 
 
 class GDrive:
     SCOPES = ['https://www.googleapis.com/auth/drive']
 
     def __init__(self, secrets_file: Path):
+        # FIXME raise error if secrets_file does not exist
         self.secrets_file = secrets_file
         token_file = secrets_file.parent / 'token.pickle'
         creds = self.get_g_drive_credentials(token_file)
         self.service = build('drive', 'v3', credentials=creds)
 
-    def get_g_drive_credentials(self, token_file):
-        creds = None
-        # The file token.pickle stores the
-        # user's access and refresh tokens. It is
-        # created automatically when the authorization
-        # flow completes for the first time.
-        # Check if file token.pickle exists
-        if token_file.exists():
-            # Read the token from the file and
-            # store it in the variable creds
-            # TODO test for age of token. If token is older than 2 weeks?? don't load it.
-            with open(token_file, 'rb') as token:
-                creds = pickle.load(token)
-        # If no valid credentials are available,
-        # request the user to log in.
-        if not creds or not creds.valid:
+    def get_g_drive_credentials(self, token_file: Path) -> Credentials:
+        token = GoogleCredentialsToken(token_file=token_file)
+        creds = token.get_token()
 
+        if not creds or not creds.valid:
             # If token is expired, it will be refreshed,
             # else, we will request a new one.
             if creds and creds.expired and creds.refresh_token:
@@ -44,11 +34,7 @@ class GDrive:
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(str(self.secrets_file), self.SCOPES)
                 creds = flow.run_local_server(port=0)
-
-            # Save the access token in token.pickle
-            # file for future usage
-            with open(token_file, 'wb') as token:
-                pickle.dump(creds, token)
+            token.save(creds)
         return creds
 
     def upload(self, file_to_upload: Path, folder_id: str):
@@ -64,7 +50,7 @@ class GDrive:
             error_message = f'Upload error. Type {e.__class__.__name__} error {e}'
             raise UploadError(error_message)
 
-    def upload_folder(self, folder_to_upload: Path, parent_folder_id: str):
+    def upload_folder(self, folder_to_upload: Path, parent_folder_id: str) -> None:
         """
         Uploads the content of a folder to Google Drive.
 
@@ -108,47 +94,62 @@ class GDrive:
         query = f"'{parent_folder_id}' in parents"
 
         # Fetch files and folders from the Google Drive API
-        response = self.service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
+        # response = self.service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
+        # Reference https://developers.google.com/drive/api/reference/rest/v3/files
+        file_attributes = [
+            'id',
+            'name',
+            'starred',
+            'shared',
+            'permissions(kind,type,role)',
+            'mimeType',
+            'fileExtension',
+            'size'
+        ]
+        file_fields = ', '.join(file_attributes).strip()
+        print(f'>>> {file_fields}')
+        fields_definition = f"nextPageToken, files({file_fields})"
+        # fields_definition = "nextPageToken, files(id, name)"
+        response = self.service.files().list(q=query,
+                                             fields=fields_definition).execute()
 
         # Extract the file names and IDs
         items = response.get('files', [])
         for item in items:
-            results.append({'name': item.get('name'), 'id': item.get('id')})
+            # results.append({'name': item.get('name'), 'id': item.get('id')})
+            results.append(item)
 
         # Handle pagination
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
             response = (
                 self.service.files()
-                .list(q=query, fields="nextPageToken, files(id, name)", pageToken=page_token)
+                .list(q=query, fields=fields_definition, pageToken=page_token)
                 .execute()
             )
             items = response.get('files', [])
             for item in items:
-                results.append({'name': item.get('name'), 'id': item.get('id')})
+                # results.append({'name': item.get('name'), 'id': item.get('id')})
+                results.append(item)
 
         return results
 
 
 if __name__ == '__main__':
-    sec_file = Path(__file__).parent.parent.parent / '.envs' / 'google_drive' / 'client_secrets.json'
-    folder_file = sec_file.parent / 'payjoy_google_folders.json'
-    with open(folder_file, 'r') as f:
-        folders_dict = json.load(f)
-    print(sec_file, sec_file.exists())
-    # file_to_upload = sec_file.parent.parent.parent / 'README.md'
-    # print(file_to_upload, file_to_upload.exists())
-    upload_folder_id = folders_dict['circulo_tests']  # Circulo tests
+    root_folder = Path(__file__).parent.parent.parent
+    sec_file = root_folder / '.envs' / 'luis.berrocal.1942-oauth.json'
+    if not sec_file.exists():
+        raise Exception(f'{sec_file} not found.')
+
     gdrive = GDrive(secrets_file=sec_file)
-    # response = gdrive.upload(file_to_upload, upload_folder_id)
-    # folder_to_upload = Path.home() / 'Documents' / 'PycharmProjects_envs' / '20230921_08'
-    folder_to_upload = Path.home() / 'Documents' / 'PycharmProjects_envs' / '20230910_09'
-    gdrive.upload_folder(folder_to_upload=folder_to_upload, parent_folder_id=upload_folder_id)
-    # gdrive.create_folder('Test_folder', upload_folder_id)
-    # print(response)
-    print('finished uploading')
-    content = gdrive.list_content(parent_folder_id=upload_folder_id)
-    for c in content:
-        print(c)
-        print('-' * 50)
-    print('FINISHED')
+    fldr_id = '1nVh5_8SfU5a9wxGdgwyOkpNQC6tJ4qTF'
+    file_to_upload = root_folder / 'README.md'
+
+    gdrive.upload(file_to_upload, fldr_id)
+
+    results = gdrive.list_content(fldr_id)
+    for r in results:
+        pprint(r)
+        print('-' * 80)
+
+
