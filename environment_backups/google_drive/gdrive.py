@@ -49,7 +49,7 @@ class GDrive:
             error_message = f'Upload error. Type {e.__class__.__name__} error {e}'
             raise UploadError(error_message)
 
-    def upload_folder(self, folder_to_upload: Path, parent_folder_id: str):
+    def upload_folder(self, folder_to_upload: Path, parent_folder_id: str) -> None:
         """
         Uploads the content of a folder to Google Drive.
 
@@ -123,7 +123,7 @@ class GDrive:
             page_token = response['nextPageToken']
             response = (
                 self.service.files()
-                .list(q=query, fields="nextPageToken, files(id, name)", pageToken=page_token)
+                .list(q=query, fields=fields_definition, pageToken=page_token)
                 .execute()
             )
             items = response.get('files', [])
@@ -135,13 +135,20 @@ class GDrive:
 
 
 if __name__ == '__main__':
-    sec_file = Path(__file__).parent.parent.parent / '.envs' / 'luis.berrocal.1942-oauth.json'
+    root_folder = Path(__file__).parent.parent.parent
+    sec_file = root_folder / '.envs' / 'luis.berrocal.1942-oauth.json'
     if not sec_file.exists():
         raise Exception(f'{sec_file} not found.')
 
     gdrive = GDrive(secrets_file=sec_file)
-    folder_id = '1nVh5_8SfU5a9wxGdgwyOkpNQC6tJ4qTF'
-    results = gdrive.list_content(folder_id)
+    fldr_id = '1nVh5_8SfU5a9wxGdgwyOkpNQC6tJ4qTF'
+    file_to_upload = root_folder / 'README.md'
+
+    gdrive.upload_folder(file_to_upload, fldr_id)
+
+    results = gdrive.list_content(fldr_id)
     for r in results:
         pprint(r)
         print('-' * 80)
+
+
