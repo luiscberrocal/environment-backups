@@ -94,7 +94,6 @@ class GDrive:
         query = f"'{parent_folder_id}' in parents"
 
         # Fetch files and folders from the Google Drive API
-        # response = self.service.files().list(q=query, fields="nextPageToken, files(id, name)").execute()
         # Reference https://developers.google.com/drive/api/reference/rest/v3/files
         file_attributes = [
             'id',
@@ -116,7 +115,6 @@ class GDrive:
         # Extract the file names and IDs
         items = response.get('files', [])
         for item in items:
-            # results.append({'name': item.get('name'), 'id': item.get('id')})
             results.append(item)
 
         # Handle pagination
@@ -129,7 +127,6 @@ class GDrive:
             )
             items = response.get('files', [])
             for item in items:
-                # results.append({'name': item.get('name'), 'id': item.get('id')})
                 results.append(item)
 
         return results

@@ -107,9 +107,20 @@ def test_backup_envs_with_valid_data(tmp_path):
     assert zip_list[0].exists()
 
 
-def test_backup_environments_with_valid_configuration(tmp_path):
-    # Mock CONFIGURATION_MANAGER and get_configuration_by_name
+def test_backup_environments_with_valid_configuration(tmp_path, mocker):
     projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path, projects_folder_name='PycharmProjects')
+    backup_folder = tmp_path / 'backups'
+    backup_folder.mkdir()
+
+    mock_configuration = {
+        "name": "test_env",
+        "project_folder": f"{projects_folder}",
+        "backup_folder": f"{backup_folder}",
+        "computer_name": "adl-computer",
+    }
+    mocker.patch('environment_backups.backups.backups.get_configuration_by_name',
+                 return_value=(mock_configuration, 100.0))
+    # Mock CONFIGURATION_MANAGER and get_configuration_by_name
 
     # Call the function
     zip_list, b_folder = backup_environment('test_env')
