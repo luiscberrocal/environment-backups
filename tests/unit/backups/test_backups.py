@@ -135,15 +135,11 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
 def test_backup_environments_with_invalid_configuration(mocker):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name to return None
     mocker.patch(
-        'your_module.CONFIGURATION_MANAGER.get_current',
-        return_value={'password': '', 'env_folder_pattern': ['env'], 'date_format': '%Y%m%d_%H'}
-    )
-    mocker.patch(
-        'your_module.get_configuration_by_name',
-        return_value=(None, None)
+        'environment_backups.backups.backups.get_configuration_by_name',
+        return_value=(None, 100.0)
     )
 
     # Test with an invalid configuration to raise ConfigurationError
     with pytest.raises(ConfigurationError) as excinfo:
-        backup_environments('invalid_env')
+        backup_environment('invalid_env')
     assert 'No environment configuration found for "invalid_env"' in str(excinfo.value)

@@ -90,7 +90,7 @@ def get_configuration_by_name(
     """Get the configuration based on a name.
     @param config_name: Name of the configuration.
     @param app_configuration: Application configuration.
-    @return: Tuple with configuration and fuzzy probabilliy
+    @return: Tuple with configuration and fuzzy probability
     """
     # TODO Implement thefuzz for fuzzy search
     config = None
