@@ -111,7 +111,7 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
     projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path, projects_folder_name='PycharmProjects')
     backup_folder = tmp_path / 'backups'
     backup_folder.mkdir()
-
+    mock_date = '2012-01-14 13:01:45'
     mock_configuration = {
         "name": "test_env",
         "project_folder": f"{projects_folder}",
@@ -122,13 +122,14 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
                  return_value=(mock_configuration, 100.0))
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
 
-    # Call the function
-    zip_list, b_folder = backup_environment('test_env')
+    with freeze_time(mock_date):
+        zip_list, b_folder = backup_environment('test_env')
 
     # Assertions
     assert len(zip_list) == 1
-    assert zip_list[0] == Path('/backups/backup.zip')
-    assert b_folder == tmp_path / 'backups'
+    assert zip_list[0] == backup_folder / '20120114_13' / 'project1.zip'
+    assert zip_list[0].exists()
+    assert b_folder == backup_folder / '20120114_13'
 
 
 def test_backup_environments_with_invalid_configuration(mocker):
