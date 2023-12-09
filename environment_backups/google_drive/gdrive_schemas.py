@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pickle
 import re
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
@@ -50,8 +51,19 @@ class GoogleCredentialsToken(BaseModel):
 
         return creds
 
+    @property
+    def created(self) -> datetime | None:
+        if self.token_file.exists():
+            dtc_timestamp = self.token_file.stat().st_ctime
+            return datetime.fromtimestamp(dtc_timestamp)
+
+    @property
+    def age_days(self) -> int:
+        if self.created:
+            td = datetime.now() - self.created
+            return td.days
+        return -1
+
     def save(self, creds: Credentials):
         with open(self.token_file, 'wb') as token:
             pickle.dump(creds, token)
-
-
