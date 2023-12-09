@@ -64,6 +64,10 @@ class GoogleCredentialsToken(BaseModel):
             return td.days
         return -1
 
+    @property
+    def expired(self):
+        return self.age_days > self.max_age_days
+
     def save(self, creds: Credentials):
         with open(self.token_file, 'wb') as token:
             pickle.dump(creds, token)
