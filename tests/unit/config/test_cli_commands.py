@@ -42,6 +42,24 @@ def test_init_command(mock_config_manager, tmp_path):
     if "Yes" in mock_inputs.split('\n'):
         mock_config_manager.save.assert_called_once()
 
+def test_init_expand_folder(mock_config_manager, tmp_path):
+    mock_config_manager.get_current.return_value = {}
+    runner = CliRunner()
+    input_list = ['%Y-%m-%d', '.envs', '', 'my_config_name', '~/Documents', str(tmp_path), "my_computer_name", 'N',
+                  'N',
+                  'y']
+    mock_inputs = '\n'.join(
+        input_list
+    )
+    result = runner.invoke(config, ['init'], input=mock_inputs)
+
+    assert result.exit_code == 0
+    assert 'Init configuration file' in result.output
+    # Assert if the mock CONFIGURATION_MANAGER was used correctly
+    mock_config_manager.set_configuration.assert_called_once()
+    if "Yes" in mock_inputs.split('\n'):
+        mock_config_manager.save.assert_called_once()
+
 
 def test_reset_delete(mock_config_manager):
     mock_config_manager.get_current.return_value = {}
