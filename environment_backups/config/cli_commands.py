@@ -134,7 +134,6 @@ config.add_command(edit)
 # TODO Add support for password at configurations level
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
-    pprint(previous_configuration)
     is_new = False
     if previous_configuration is None:
         previous_configuration = {}
@@ -146,17 +145,18 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
     default_value = previous_configuration.get('name')
     config_dict['name'] = click.prompt(prompt, default=default_value)
 
-    # TODO Allow using ~/PycharmProjects for example
     prompt = 'Project folder'
     default_value = previous_configuration.get('projects_folder')
     config_dict['projects_folder'] = click.prompt(prompt,
-                                                 type=click.Path(exists=True),
-                                                 default=default_value,
-                                                 value_proc=process_input_path)
+                                                  type=click.Path(exists=True),
+                                                  default=default_value,
+                                                  value_proc=process_input_path)
 
     prompt = 'Backup folder'
     default_value = previous_configuration.get('backup_folder')
-    config_dict['backup_folder'] = click.prompt(prompt, type=click.Path(exists=False), default=default_value)
+    config_dict['backup_folder'] = click.prompt(prompt, type=click.Path(exists=False),
+                                                default=default_value,
+                                                value_proc=process_input_path)
 
     prompt = 'Computer name'
     # TODO Get computer name from hostname??
