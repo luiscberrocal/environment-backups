@@ -1,5 +1,5 @@
+import os
 import sys
-from pathlib import Path
 from typing import Any, Dict
 
 import click
@@ -78,6 +78,11 @@ def set_null_if_blank(value: str) -> str | None:
     return value
 
 
+# Function to expand user path in the input
+def process_input_path(value):
+    return os.path.expanduser(value) if value else None
+
+
 @click.command()
 def edit():
     click.secho(f'Init configuration file: {CONFIGURATION_MANAGER.config_file}', fg='green')
@@ -88,8 +93,10 @@ def edit():
     configuration_dict = CONFIGURATION_MANAGER.get_current()
 
     prompt = 'Date format for backup folder prefix'
-    configuration_dict['application']['date_format'] = click.prompt(prompt, default=configuration_dict['application'][
-        'date_format'])
+    configuration_dict['application']['date_format'] = click.prompt(
+        prompt,
+        default=configuration_dict['application']['date_format']
+    )
 
     prompt = 'Environment folder pattern name to parse. If several separate by a comma'
     patterns = ', '.join(configuration_dict['application']['environment_folder_pattern'])
@@ -127,6 +134,7 @@ config.add_command(edit)
 # TODO Add support for password at configurations level
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
+    pprint(previous_configuration)
     is_new = False
     if previous_configuration is None:
         previous_configuration = {}
@@ -138,11 +146,13 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
     default_value = previous_configuration.get('name')
     config_dict['name'] = click.prompt(prompt, default=default_value)
 
-
     # TODO Allow using ~/PycharmProjects for example
     prompt = 'Project folder'
     default_value = previous_configuration.get('projects_folder')
-    config_dict['project_folder'] = click.prompt(prompt, type=click.Path(exists=True), default=default_value)
+    config_dict['projects_folder'] = click.prompt(prompt,
+                                                 type=click.Path(exists=True),
+                                                 default=default_value,
+                                                 value_proc=process_input_path)
 
     prompt = 'Backup folder'
     default_value = previous_configuration.get('backup_folder')
