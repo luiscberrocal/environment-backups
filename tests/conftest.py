@@ -29,7 +29,7 @@ def fixtures_folder() -> Path:
 
 @pytest.fixture
 def config_manager(tmp_path) -> ConfigurationManager:
-    return ConfigurationManager(config_root_folder=tmp_path)
+    return ConfigurationManager(config_root_folder=tmp_path, version='1.0.1')
 
 
 @pytest.fixture
