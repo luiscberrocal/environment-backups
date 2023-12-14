@@ -75,6 +75,23 @@ def test_backup_creation(config_manager):
     config_manager.save()
 
     backup_file = list(config_manager.config_backup_folder.glob('*.toml'))[0]
+    assert backup_file.name == '20231103_141516_v1.0.1_configuration.toml'
+
+
+@freeze_time('2023-11-03 14:15:16')
+def test_backup_creation_without_version(config_manager):
+    # Initial save to create a configuration file
+    initial_config = {'initial': 'config'}
+    config_manager.set_configuration(initial_config)
+    config_manager.version = None
+    config_manager.save()
+
+    # Modify and save again to trigger backup
+    new_config = {'new': 'config'}
+    config_manager.set_configuration(new_config)
+    config_manager.save()
+
+    backup_file = list(config_manager.config_backup_folder.glob('*.toml'))[0]
     assert backup_file.name == '20231103_141516_configuration.toml'
 
 
