@@ -145,7 +145,7 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
     default_value = previous_configuration.get('name')
     config_dict['name'] = click.prompt(prompt, default=default_value)
 
-    prompt = 'Project folder'
+    prompt = 'Projects folder'
     default_value = previous_configuration.get('projects_folder')
     config_dict['projects_folder'] = click.prompt(prompt,
                                                   type=click.Path(exists=True),

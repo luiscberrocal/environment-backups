@@ -8,7 +8,7 @@ from rich.console import Console
 
 from environment_backups.config.configuration import ConfigurationManager
 
-CONFIGURATION_MANAGER = ConfigurationManager()
+CONFIGURATION_MANAGER = ConfigurationManager(version=__version__)
 
 CONSOLE = Console()
 

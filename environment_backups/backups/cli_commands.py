@@ -31,7 +31,6 @@ def backup(environment: str, projects_folder: Path, backup_folder: Path):
             gdrive = GDrive(secrets_file=secrets_file)
             gdrive.upload_folder(b_folder, env_cfg['google_drive_folder_id'])
             click.secho(f'Uploaded {b_folder} to google drive')
-
     else:
         legacy_backup(backup_folder, projects_folder)
 
