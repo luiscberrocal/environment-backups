@@ -6,7 +6,7 @@ __version__ = '1.2.3'
 
 from rich.console import Console
 
-from environment_backups.config.configuration import ConfigurationManager
+from .config.configuration import ConfigurationManager
 
 CONFIGURATION_MANAGER = ConfigurationManager(version=__version__)
 

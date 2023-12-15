@@ -7,7 +7,8 @@ description = "CLI Application to backup environment variables.."
 authors = ["Luis C. Berrocal <luis.berrocal.1942@gmail.com>"]
 readme = "README.md"
 classifiers=[
-    'Development Status :: 2 - Pre-Alpha',
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Console',
     'Intended Audience :: Developers',
     'Natural Language :: English',
     'Programming Language :: Python :: 3',

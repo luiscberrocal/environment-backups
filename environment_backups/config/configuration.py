@@ -15,7 +15,6 @@ class ConfigurationManager:
 
     def __init__(self, config_root_folder: Optional[Path] = None, config_filename: Optional[str] = None,
                  version: str = None):
-        # TODO Add version to init for use in backups
         self.version = version
         if config_root_folder is None:
             self.config_folder = Path().home() / self.DEFAULT_CONFIG_FOLDER_NAME
@@ -67,7 +66,6 @@ class ConfigurationManager:
 
     def backup(self) -> Path:
         if self.config_file.exists():
-            # TODO Add version number
             backup_filename = backup_file(filename=self.config_file,
                                           backup_folder=self.config_backup_folder,
                                           current_version=self.version)
