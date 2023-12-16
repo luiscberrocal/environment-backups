@@ -23,7 +23,7 @@ def test_command_line_interface():
         "  about",
         "  backup",
         "  config  Configuration entrypoint.",
-        ""
+        "",
     ]
     assert len(result_lines) == len(expected_lines)
     assert result.exit_code == 0
@@ -50,7 +50,7 @@ def test_help():
         "  about",
         "  backup",
         "  config  Configuration entrypoint.",
-        ""
+        "",
     ]
     assert len(result_lines) == len(expected_lines)
     assert result.exit_code == 0

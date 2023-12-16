@@ -47,7 +47,7 @@ def test_edit_command_apps_values(tmp_path):
         f"Backup folder [{app_configuration.configurations[0].backup_folder}]: ",
         "Computer name [deep-space9_0]: ",
         "Save configuration? [y/N]: y",
-        ""
+        "",
     ]
     # assert 'Init configuration file: /path/to/config.toml' in result.output
     assert len(output_lines) == 11
@@ -57,6 +57,7 @@ def test_edit_command_apps_values(tmp_path):
     mock_config_manager.set_configuration.assert_called_once()
     # TODO assert called one with for set_configuration
     mock_config_manager.save.assert_called_once()
+
 
 def test_edit_command_change_name(tmp_path):
     """
@@ -99,7 +100,7 @@ def test_edit_command_change_name(tmp_path):
         f"Backup folder [{app_configuration.configurations[0].backup_folder}]: ",
         "Computer name [deep-space9_0]: ",
         "Save configuration? [y/N]: y",
-        ""
+        "",
     ]
     # assert 'Init configuration file: /path/to/config.toml' in result.output
     assert len(output_lines) == 11
@@ -109,4 +110,3 @@ def test_edit_command_change_name(tmp_path):
     mock_config_manager.set_configuration.assert_called_once()
     # TODO assert called one with for set_configuration
     mock_config_manager.save.assert_called_once()
-

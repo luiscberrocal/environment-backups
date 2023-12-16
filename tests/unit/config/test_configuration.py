@@ -126,4 +126,5 @@ def test_set_and_get_configuration(config_manager):
 
     assert config_manager.get_current() == test_config
 
+
 # More tests can be added as needed to cover other aspects or edge cases.

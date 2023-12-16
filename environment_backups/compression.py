@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from pyzipper import WZ_AES, AESZipFile, ZIP_DEFLATED
+from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
 
 from environment_backups.exceptions import EnvironmentBackupsError
 

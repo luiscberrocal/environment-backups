@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from freezegun import freeze_time
 
-from environment_backups.backups.backups import (list_all_projects, get_projects_envs, backup_envs, backup_environment)
+from environment_backups.backups.backups import list_all_projects, get_projects_envs, backup_envs, backup_environment
 from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
 from tests.factories import projects_folder_tree_factory
@@ -11,8 +11,10 @@ from tests.factories import projects_folder_tree_factory
 
 def test_list_all_projects_with_existing_folders(mocker):
     # Mock os.scandir to return a list of mock directories
-    mocker.patch('os.scandir', return_value=[mocker.Mock(is_dir=lambda: True, path='dir1'),
-                                             mocker.Mock(is_dir=lambda: True, path='dir2')])
+    mocker.patch(
+        'os.scandir',
+        return_value=[mocker.Mock(is_dir=lambda: True, path='dir1'), mocker.Mock(is_dir=lambda: True, path='dir2')],
+    )
     assert list_all_projects(Path('/some/path')) == ['dir1', 'dir2']
 
 
@@ -29,7 +31,7 @@ def test_get_projects_envs_with_valid_data(mocker):
     mocker.patch('pathlib.Path.exists', return_value=True)
     expected_result = {
         'project1': {'envs': Path('project1/env_folder')},
-        'project2': {'envs': Path('project2/env_folder')}
+        'project2': {'envs': Path('project2/env_folder')},
     }
     assert get_projects_envs(Path('/projects'), ['env_folder']) == expected_result
 
@@ -92,10 +94,7 @@ def test_backup_envs_with_valid_data(tmp_path):
 
     # Call the function
     zip_list, b_folder = backup_envs(
-        projects_folder=projects_folder,
-        backup_folder=backup_folder,
-        environment_folders=['.envs'],
-        password=None
+        projects_folder=projects_folder, backup_folder=backup_folder, environment_folders=['.envs'], password=None
     )
 
     # Assertions
@@ -116,8 +115,9 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
         "backup_folder": f"{backup_folder}",
         "computer_name": "adl-computer",
     }
-    mocker.patch('environment_backups.backups.backups.get_configuration_by_name',
-                 return_value=(mock_configuration, 100.0))
+    mocker.patch(
+        'environment_backups.backups.backups.get_configuration_by_name', return_value=(mock_configuration, 100.0)
+    )
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
 
     with freeze_time(mock_date):
@@ -132,10 +132,7 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
 
 def test_backup_environments_with_invalid_configuration(mocker):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name to return None
-    mocker.patch(
-        'environment_backups.backups.backups.get_configuration_by_name',
-        return_value=(None, 100.0)
-    )
+    mocker.patch('environment_backups.backups.backups.get_configuration_by_name', return_value=(None, 100.0))
 
     # Test with an invalid configuration to raise ConfigurationError
     with pytest.raises(ConfigurationError) as excinfo:

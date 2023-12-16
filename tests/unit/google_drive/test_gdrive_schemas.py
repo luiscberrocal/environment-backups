@@ -12,7 +12,6 @@ class DummyTokenObject(BaseModel):
 
 
 class TestGoogleCredentialsToken:
-
     def test_save(self, tmp_path):
         dummy_token = DummyTokenObject(name='My name', age=4)
         dummy_file = tmp_path / 'cred.token'

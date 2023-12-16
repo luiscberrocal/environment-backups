@@ -13,8 +13,9 @@ class ConfigurationManager:
     DEFAULT_CONFIG_FILENAME = 'configuration.toml'
     APP_NAME = DEFAULT_CONFIG_FOLDER_NAME[1:].replace('_', '-')
 
-    def __init__(self, config_root_folder: Optional[Path] = None, config_filename: Optional[str] = None,
-                 version: str = None):
+    def __init__(
+        self, config_root_folder: Optional[Path] = None, config_filename: Optional[str] = None, version: str = None
+    ):
         self.version = version
         if config_root_folder is None:
             self.config_folder = Path().home() / self.DEFAULT_CONFIG_FOLDER_NAME
@@ -66,9 +67,9 @@ class ConfigurationManager:
 
     def backup(self) -> Path:
         if self.config_file.exists():
-            backup_filename = backup_file(filename=self.config_file,
-                                          backup_folder=self.config_backup_folder,
-                                          current_version=self.version)
+            backup_filename = backup_file(
+                filename=self.config_file, backup_folder=self.config_backup_folder, current_version=self.version
+            )
             return backup_filename
 
     def delete(self) -> Path:

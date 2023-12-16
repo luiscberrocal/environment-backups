@@ -103,14 +103,13 @@ class GDrive:
             'permissions(kind,type,role)',
             'mimeType',
             'fileExtension',
-            'size'
+            'size',
         ]
         file_fields = ', '.join(file_attributes).strip()
         print(f'>>> {file_fields}')
         fields_definition = f"nextPageToken, files({file_fields})"
         # fields_definition = "nextPageToken, files(id, name)"
-        response = self.service.files().list(q=query,
-                                             fields=fields_definition).execute()
+        response = self.service.files().list(q=query, fields=fields_definition).execute()
 
         # Extract the file names and IDs
         items = response.get('files', [])
@@ -120,11 +119,7 @@ class GDrive:
         # Handle pagination
         while 'nextPageToken' in response:
             page_token = response['nextPageToken']
-            response = (
-                self.service.files()
-                .list(q=query, fields=fields_definition, pageToken=page_token)
-                .execute()
-            )
+            response = self.service.files().list(q=query, fields=fields_definition, pageToken=page_token).execute()
             items = response.get('files', [])
             for item in items:
                 results.append(item)
@@ -148,5 +143,3 @@ if __name__ == '__main__':
     for r in results:
         pprint(r)
         print('-' * 80)
-
-

@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from environment_backups import CONFIGURATION_MANAGER
-from environment_backups.backups.backups import backup_envs, backup_environment
+from environment_backups.backups.backups import backup_environment, backup_envs
 from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import EnvironmentBackupsError
 from environment_backups.google_drive.gdrive import GDrive
@@ -50,6 +50,7 @@ def legacy_backup(backup_folder, projects_folder):
     )
     for i, zip_file in enumerate(zip_list, 1):
         click.secho(f'{i:3}. {zip_file.name}', fg='green')
+
 
 # TODO add backup by name. environment-backups backup --name adelantos --upload
 # TODO Upload to google after excectuting a backup.

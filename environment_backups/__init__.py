@@ -15,7 +15,9 @@ CONSOLE = Console()
 
 def logger_configuration():
     import logging.config
+
     from .constants import LOGGING
+
     logging.config.dictConfig(LOGGING)
 
 
