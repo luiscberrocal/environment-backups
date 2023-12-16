@@ -29,15 +29,13 @@ def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> D
     return folder_dict
 
 
-# TODO Add * to force use of names.
-def backup_envs(
-    projects_folder: Path,
-    backup_folder: Path,
-    environment_folders: List[str],
-    password: str = None,
-    date_format='%Y%m%d_%H',
-) -> Tuple[List[Path], Path]:
-
+def backup_envs(*,
+                projects_folder: Path,
+                backup_folder: Path,
+                environment_folders: List[str],
+                password: str = None,
+                date_format='%Y%m%d_%H',
+                ) -> Tuple[List[Path], Path]:
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
     # TODO add computer name to the folder?? or the file??
     timestamp = datetime.now().strftime(date_format)

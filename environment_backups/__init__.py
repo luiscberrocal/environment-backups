@@ -22,4 +22,3 @@ def logger_configuration():
 logger_configuration()
 
 # TODO Add tox support
-# TODO Clean toml file for python versions

@@ -9,8 +9,6 @@ from environment_backups.exceptions import ConfigurationError
 from tests.factories import projects_folder_tree_factory
 
 
-# TODO Fix broken tests
-
 def test_list_all_projects_with_existing_folders(mocker):
     # Mock os.scandir to return a list of mock directories
     mocker.patch('os.scandir', return_value=[mocker.Mock(is_dir=lambda: True, path='dir1'),

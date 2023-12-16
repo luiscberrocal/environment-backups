@@ -34,3 +34,22 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
             pwd = password.encode('utf-8')
             zf.setpassword(pwd)
         zipdir(folder_to_zip, zf)
+
+
+def unzip_file(zip_file: Path, destination_folder: Path, password: str = None):
+    """
+    Extracts a zip file into a specified destination folder, with optional password decryption.
+    @param zip_file: Path to the zip file.
+    @param destination_folder: Path to the destination folder.
+    @param password: Optional password for encrypted zip files.
+    """
+    if not zip_file.exists() or not zip_file.is_file():
+        raise EnvironmentBackupsError(f"The zip file {zip_file} does not exist or is not a file.")
+
+    if not destination_folder.exists():
+        os.makedirs(destination_folder)
+
+    with AESZipFile(zip_file, 'r') as zf:
+        if password:
+            zf.setpassword(password.encode('utf-8'))
+        zf.extractall(destination_folder)
