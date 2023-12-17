@@ -12,8 +12,8 @@ from environment_backups.exceptions import ConfigurationError
 logger = logging.getLogger()
 
 
-def list_all_projects(project_folder: Path) -> List[str]:
-    folders = [x.path for x in os.scandir(project_folder) if x.is_dir()]
+def list_all_projects(projects_folder: Path) -> List[str]:
+    folders = [x.path for x in os.scandir(projects_folder) if x.is_dir()]
     return folders
 
 

@@ -1,4 +1,5 @@
 import os
+import time
 from pathlib import Path
 
 from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
@@ -9,9 +10,9 @@ from environment_backups.exceptions import EnvironmentBackupsError
 def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
     """
     Compresses a folder and creates a zip file with optional password protection.
-    @param zip_file:
-    @param folder_to_zip:
-    @param password:
+    @param zip_file: Zip file path
+    @param folder_to_zip: Folder to zip
+    @param password: Password for the  zip file
     """
     if not folder_to_zip.exists():
         message = f'The target folder to put the zip file {folder_to_zip}does not exist.'
@@ -21,15 +22,19 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
         """
         Recursively adds files and directories to a zip file.
         """
-
-        for root, dirs, files in os.walk(path):
-            for file in files:
-                file_path = os.path.join(root, file)
-                ziph.write(file_path, os.path.relpath(file_path, path.parent))
+        try:
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    ziph.write(file_path, os.path.relpath(file_path, path.parent))
+        except ValueError as e:
+            error_message = f'Error zipping {path}. Error: {e}'
+            raise EnvironmentBackupsError(error_message)
 
     encryption = WZ_AES if password else None
 
-    with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption) as zf:
+    with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption,
+                    strict_timestamps=False) as zf:
         if password:
             pwd = password.encode('utf-8')
             zf.setpassword(pwd)
@@ -53,3 +58,25 @@ def unzip_file(zip_file: Path, destination_folder: Path, password: str = None):
         if password:
             zf.setpassword(password.encode('utf-8'))
         zf.extractall(destination_folder)
+
+
+def tmp_main(fld: Path, backup_folder: Path):
+    from environment_backups.backups.backups import list_all_projects
+    start = time.time()
+    projects = list_all_projects(fld)
+
+    for project in projects:
+        zip_file = backup_folder / f'{project}.zip'
+        folder_to_zip = fld / f'{project}'
+        print(f'Zipping {folder_to_zip}')
+        zip_folder_with_pwd(zip_file=zip_file, folder_to_zip=folder_to_zip)
+
+    elapsed = time.time() - start
+    print(f"Folders {len(projects)} elapsed: {elapsed:.2f} seconds")
+
+
+if __name__ == '__main__':
+    my_downloads = Path.home() / 'Downloads'
+    my_documents = Path.home() / 'Documents' / '__zippint_test'
+    my_documents.mkdir(exist_ok=True)
+    tmp_main(my_downloads, my_documents)
