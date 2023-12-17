@@ -111,7 +111,7 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
     mock_date = '2012-01-14 13:01:45'
     mock_configuration = {
         "name": "test_env",
-        "project_folder": f"{projects_folder}",
+        "projects_folder": f"{projects_folder}",
         "backup_folder": f"{backup_folder}",
         "computer_name": "adl-computer",
     }
