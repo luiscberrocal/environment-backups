@@ -1,3 +1,4 @@
+import asyncio
 import os
 import time
 from pathlib import Path
@@ -114,18 +115,28 @@ async def tmp_main_async(fld: Path, backup_folder: Path):
     start = time.time()
     projects = list_all_projects(fld)
 
+    task_list = []
     for project in projects:
         zip_file = backup_folder / f'{project}.zip'
         folder_to_zip = fld / f'{project}'
         print(f'Zipping {folder_to_zip} to {zip_file}')
-        zip_folder_with_pwd(zip_file=zip_file, folder_to_zip=folder_to_zip)
+        task_list.append(zip_folder_with_pwd_async(zip_file=zip_file, folder_to_zip=folder_to_zip))
+
+    result = await asyncio.gather(*task_list)
+    print(result)
 
     elapsed = time.time() - start
     print(f"Folders {len(projects)} elapsed: {elapsed:.2f} seconds")
-    
+
 
 if __name__ == '__main__':
     my_downloads = Path.home() / 'Downloads'
     my_documents = Path.home() / 'Documents' / '__zipping_test'
     my_documents.mkdir(exist_ok=True)
-    tmp_main(my_downloads, my_documents)
+    do_sync = False
+    do_async = True
+    if do_sync:
+        tmp_main(my_downloads, my_documents)
+
+    if do_async:
+        asyncio.run(tmp_main_async(my_downloads, my_documents))
