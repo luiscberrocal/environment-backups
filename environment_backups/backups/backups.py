@@ -59,7 +59,7 @@ def backup_environment(environment_name: str) -> Tuple[List[Path], Path]:
     pwd = app_configuration.get('password')
     environment_folders = app_configuration['application'].get('environment_folder_pattern')
     date_format = app_configuration['application'].get('date_format')
-    project_folder = Path(cfg['project_folder'])
+    project_folder = Path(cfg['projects_folder'])
     backup_folder = Path(cfg['backup_folder'])
     zip_list, b_folder = backup_envs(
         projects_folder=project_folder,
