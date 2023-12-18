@@ -1,8 +1,13 @@
 import asyncio
 import os
+import shutil
 from pathlib import Path
 from typing import List
+
 import pyzipper
+
+from environment_backups.backups.backups import list_all_projects
+from environment_backups.compression import zip_folder_with_pwd
 
 
 async def zip_folder_with_pwd_async(folder: Path, zip_file: Path, password: str = None):
@@ -47,10 +52,32 @@ async def zip_folders_with_pwd(source_folder: Path, backup_folder: Path, passwor
     return zipped_files
 
 
+def main_sync():
+    source = Path.home() / 'Downloads'
+    backup = Path.home() / 'Documents' / '__zipping_test'
+    if backup.exists():
+        shutil.rmtree(backup)
+        backup.mkdir()
+    start = time.time()
+    projects = list_all_projects(source)
+
+    for project in projects:
+        zip_file = backup / f'{project}.zip'
+        folder_to_zip = source / f'{project}'
+        print(f'Zipping {folder_to_zip} to {zip_file}')
+        zip_folder_with_pwd(zip_file=zip_file, folder_to_zip=folder_to_zip)
+
+    elapsed = time.time() - start
+    print(f"Folders {len(projects)} elapsed: {elapsed:.2f} seconds")
+
+
 # Example usage
 async def main():
     source = Path.home() / 'Downloads'
     backup = Path.home() / 'Documents' / '__zipping_test'
+    if backup.exists():
+        shutil.rmtree(backup)
+        backup.mkdir()
 
     zipped_files = await zip_folders_with_pwd(source, backup, None)
     print("Zipped files:", zipped_files)
@@ -58,6 +85,10 @@ async def main():
 
 if __name__ == '__main__':
     import time
+
     start = time.time()
     asyncio.run(main())
     print(f'Elapsed: {(time.time() - start):.2f} seconds.')
+
+    main_sync()
+
