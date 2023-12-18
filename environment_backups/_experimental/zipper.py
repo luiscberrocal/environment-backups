@@ -1,10 +1,13 @@
 import asyncio
 import os
-import time
+import shutil
 from pathlib import Path
 from typing import List
 
 import pyzipper
+
+from environment_backups.backups.backups import list_all_projects
+from environment_backups.compression import zip_folder_with_pwd
 
 
 async def zip_folder_with_pwd_async(folder: Path, zip_file: Path, password: str = None):
@@ -35,26 +38,57 @@ def sync_zip_folder_with_pwd(folder: Path, zip_file: Path, password: str = None)
 
 
 async def zip_folders_with_pwd(source_folder: Path, backup_folder: Path, password: str = None) -> List[Path]:
+    zipping_tasks = []
     zipped_files = []
+
     for item in source_folder.iterdir():
         if item.is_dir():
             zip_file_path = backup_folder / f"{item.name}.zip"
-            print(f'Zipping {item.name} to {zip_file_path}')
-            await zip_folder_with_pwd_async(item, zip_file_path, password)
+            print(f'Zippging {item.name} to {zip_file_path}')
+            zipping_tasks.append(zip_folder_with_pwd_async(item, zip_file_path, password))
             zipped_files.append(zip_file_path)
+
+    await asyncio.gather(*zipping_tasks)
     return zipped_files
+
+
+def main_sync():
+    source = Path.home() / 'Downloads'
+    backup = Path.home() / 'Documents' / '__zipping_test'
+    if backup.exists():
+        shutil.rmtree(backup)
+        backup.mkdir()
+    start = time.time()
+    projects = list_all_projects(source)
+
+    for project in projects:
+        zip_file = backup / f'{project}.zip'
+        folder_to_zip = source / f'{project}'
+        print(f'Zipping {folder_to_zip} to {zip_file}')
+        zip_folder_with_pwd(zip_file=zip_file, folder_to_zip=folder_to_zip)
+
+    elapsed = time.time() - start
+    print(f"Folders {len(projects)} elapsed: {elapsed:.2f} seconds")
 
 
 # Example usage
 async def main():
     source = Path.home() / 'Downloads'
     backup = Path.home() / 'Documents' / '__zipping_test'
+    if backup.exists():
+        shutil.rmtree(backup)
+        backup.mkdir()
 
     zipped_files = await zip_folders_with_pwd(source, backup, None)
     print("Zipped files:", zipped_files)
 
 
 if __name__ == '__main__':
+    import time
+
     start = time.time()
     asyncio.run(main())
     print(f'Elapsed: {(time.time() - start):.2f} seconds.')
+
+    main_sync()
+
