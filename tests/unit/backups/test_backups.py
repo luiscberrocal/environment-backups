@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -104,7 +105,11 @@ def test_backup_envs_with_valid_data(tmp_path):
     assert zip_list[0].exists()
 
 
-def test_backup_environments_with_valid_configuration(tmp_path, mocker):
+def test_backup_environments_with_valid_configuration(tmp_path, fixtures_folder, mocker):
+    mock_config_file = fixtures_folder / 'app_configuration.json'
+    with open(mock_config_file, 'r') as f:
+        config = json.load(f)
+
     projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path, projects_folder_name='PycharmProjects')
     backup_folder = tmp_path / 'backups'
     backup_folder.mkdir()
@@ -115,11 +120,14 @@ def test_backup_environments_with_valid_configuration(tmp_path, mocker):
         "backup_folder": f"{backup_folder}",
         "computer_name": "adl-computer",
     }
+    config['configurations'].append(mock_configuration)
+
     mocker.patch(
         'environment_backups.backups.backups.get_configuration_by_name', return_value=(mock_configuration, 100.0)
     )
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
-
+    mocker.patch("environment_backups.backups.backups.CONFIGURATION_MANAGER.get_current",
+                 return_value=config)
     with freeze_time(mock_date):
         zip_list, b_folder = backup_environment('test_env')
 
