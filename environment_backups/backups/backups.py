@@ -51,6 +51,7 @@ def backup_envs(
 
 
 def backup_environment(environment_name: str) -> Tuple[List[Path], Path]:
+    # TODO Deprecate an use zipper
     app_configuration = CONFIGURATION_MANAGER.get_current()
     cfg, _ = get_configuration_by_name(environment_name, app_configuration)
     if cfg is None:
