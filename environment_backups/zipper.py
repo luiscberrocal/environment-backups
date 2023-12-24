@@ -90,7 +90,7 @@ def list_folder_contents(folder: Path):
 if __name__ == '__main__':
     import time
 
-    do_sync = True
+    do_sync = False
     do_async = not do_sync
 
     source_folder_m = Path.home() / 'Downloads'
