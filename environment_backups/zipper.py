@@ -38,16 +38,20 @@ def sync_zip_folder_with_pwd(folder: Path, zip_file: Path, password: str = None)
                 zipf.write(file_path, file_path.relative_to(folder.parent))
 
 
-async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, password: str = None) -> List[Path]:
+async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, environment_folders: List[str],
+                                     password: str = None) -> List[Path]:
     zipping_tasks = []
     zipped_files = []
 
     for item in source_folder.iterdir():
         if item.is_dir():
-            zip_file_path = backup_folder / f"{item.name}.zip"
-            print(f'Zipping {item.name} to {zip_file_path}')
-            zipping_tasks.append(zip_folder_with_pwd_async(item, zip_file_path, password))
-            zipped_files.append(zip_file_path)
+            # Support more than one environment folder
+            env_folder = item / environment_folders[0]
+            if env_folder.exists():
+                zip_file_path = backup_folder / f"{item.name}.zip"
+                print(f'Zipping {item.name} to {zip_file_path}')
+                zipping_tasks.append(zip_folder_with_pwd_async(env_folder, zip_file_path, password))
+                zipped_files.append(zip_file_path)
 
     await asyncio.gather(*zipping_tasks)
     return zipped_files
@@ -65,7 +69,7 @@ def main_sync(source: Path, backup: Path, password: str = None):
 
 
 async def main_async(source: Path, backup: Path, password: str = None):
-    zipped_files = await zip_folders_with_pwd_async(source, backup, password)
+    zipped_files = await zip_folders_with_pwd_async(source, backup,['.envs'], password)
     print("Zipped files:", zipped_files)
 
 
@@ -93,7 +97,7 @@ if __name__ == '__main__':
     do_sync = False
     do_async = not do_sync
 
-    source_folder_m = Path.home() / 'Downloads'
+    source_folder_m = Path.home() / 'Documents' / 'MyProjectsForTests'
     backup_folder_m = Path.home() / 'Documents' / '__zipping_test'
 
     clean_and_create_folder(backup_folder_m)
