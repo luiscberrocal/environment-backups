@@ -57,8 +57,9 @@ def main_sync(source: Path, backup: Path, password: str = None):
     projects = list_all_projects(source)
 
     for project in projects:
-        zip_file = backup / f'{project}.zip'
-        folder_to_zip = backup / f'{project}'
+        project_path = Path(project)
+        zip_file = backup / f'{project_path.name}.zip'
+        folder_to_zip = source / f'{project}'
         print(f'Zipping {folder_to_zip} to {zip_file}')
         zip_folder_with_pwd(zip_file=zip_file, folder_to_zip=folder_to_zip)
 
@@ -77,11 +78,13 @@ def clean_and_create_folder(folder: Path):
 
 
 def list_folder_contents(folder: Path):
-    i = 1
+    i = 0
     for entry in folder.iterdir():
         size = entry.stat().st_size / 1024 / 1024
-        print(f'{i} {entry.name:35} exists {entry.exists()} {size :,.2f} MB')
         i += 1
+        print(f'{i} {entry.name:35} exists {entry.exists()} {size :,.2f} MB')
+    if i == 0:
+        print('No folder found')
 
 
 if __name__ == '__main__':
