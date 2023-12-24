@@ -8,7 +8,7 @@ from environment_backups.exceptions import EnvironmentBackupsError
 
 
 @deprecated(reason='Use zipper.zip_folder_with_pwd_async')
-def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
+def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None) -> None:
     """
     Compresses a folder and creates a zip file with optional password protection.
     @param zip_file: Zip file path

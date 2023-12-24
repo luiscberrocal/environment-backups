@@ -42,12 +42,17 @@ def backup_envs(
     timestamp = datetime.now().strftime(date_format)
     b_folder = backup_folder / timestamp
     b_folder.mkdir(exist_ok=True)
+
     zip_list = []
-    for project, v in project_envs_dict.items():
-        zip_file = b_folder / f'{project}.zip'
-        zip_folder_with_pwd(zip_file, v['envs'], password=password)
-        zip_list.append(zip_file)
-    return zip_list, b_folder
+    use_async = False
+    if use_async:
+        raise NotImplemented("Use asynchronous")
+    else:
+        for project, v in project_envs_dict.items():
+            zip_file = b_folder / f'{project}.zip'
+            zip_folder_with_pwd(zip_file, v['envs'], password=password)
+            zip_list.append(zip_file)
+        return zip_list, b_folder
 
 
 def backup_environment_legacy(environment_name: str) -> Tuple[List[Path], Path]:
