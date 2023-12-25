@@ -84,7 +84,8 @@ def test_zip_folder_with_empty_directory(mocker, tmp_path):
 
 
 @freeze_time("2023-11-02 13:16:12")
-def test_backup_envs_with_valid_data(tmp_path):
+@pytest.mark.asyncio
+async def test_backup_envs_with_valid_data(tmp_path):
     # Mock get_projects_envs to return a dictionary of projects with environments
     projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path)
 
@@ -95,7 +96,7 @@ def test_backup_envs_with_valid_data(tmp_path):
     backup_folder.mkdir()
 
     # Call the function
-    zip_list, b_folder = backup_envs(
+    zip_list, b_folder = await backup_envs(
         projects_folder=projects_folder, backup_folder=backup_folder, environment_folders=['.envs'], password=None
     )
 
@@ -106,7 +107,8 @@ def test_backup_envs_with_valid_data(tmp_path):
     assert zip_list[0].exists()
 
 
-def test_backup_environments_with_valid_configuration(tmp_path, fixtures_folder, mocker):
+@pytest.mark.asyncio
+async def test_backup_environments_with_valid_configuration(tmp_path, fixtures_folder, mocker):
     mock_config_file = fixtures_folder / 'app_configuration.json'
     with open(mock_config_file, 'r') as f:
         config = json.load(f)
@@ -130,7 +132,7 @@ def test_backup_environments_with_valid_configuration(tmp_path, fixtures_folder,
     mocker.patch("environment_backups.backups.backups.CONFIGURATION_MANAGER.get_current",
                  return_value=config)
     with freeze_time(mock_date):
-        zip_list, b_folder = backup_environment('test_env')
+        zip_list, b_folder = await backup_environment('test_env')
 
     # Assertions
     assert len(zip_list) == 1
@@ -139,11 +141,12 @@ def test_backup_environments_with_valid_configuration(tmp_path, fixtures_folder,
     assert b_folder == backup_folder / '20120114_13'
 
 
-def test_backup_environments_with_invalid_configuration(mocker):
+@pytest.mark.asyncio
+async def test_backup_environments_with_invalid_configuration(mocker):
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name to return None
     mocker.patch('environment_backups.backups.backups.get_configuration_by_name', return_value=(None, 100.0))
 
     # Test with an invalid configuration to raise ConfigurationError
     with pytest.raises(ConfigurationError) as excinfo:
-        backup_environment('invalid_env')
+        await backup_environment('invalid_env')
     assert 'No environment configuration found for "invalid_env"' in str(excinfo.value)
