@@ -129,7 +129,7 @@ config.add_command(edit)
 # TODO Add restore backup capabilities
 
 # TODO Add support for password at configurations level
-
+# TODO Add sanity check.
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
     is_new = False

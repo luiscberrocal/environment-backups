@@ -30,6 +30,8 @@ def about():
     panel = Panel('\n'.join(content), title=app_name, subtitle=f"version: {current_version}")
     CONSOLE.print(panel)
 
+# TODO add configurations and status
+
 
 main.add_command(backup)
 main.add_command(about)
