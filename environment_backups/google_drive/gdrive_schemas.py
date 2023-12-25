@@ -13,7 +13,7 @@ from typing_extensions import Annotated
 
 
 def validate_client_id(v: str) -> str:
-    regexp = re.compile(f"^\w+-\w+.apps.googleusercontent.com$")
+    regexp = re.compile(r"^\w+-\w+.apps.googleusercontent.com$")
     match = regexp.match(v)
     if match:
         return v

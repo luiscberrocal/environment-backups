@@ -1,10 +1,11 @@
 import sys
+import time
 from pathlib import Path
 
 import click
 
 from environment_backups import CONFIGURATION_MANAGER
-from environment_backups.backups.backups import backup_envs, backup_environment
+from environment_backups.backups.backups import backup_environment, backup_envs
 from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import EnvironmentBackupsError
 from environment_backups.google_drive.gdrive import GDrive
@@ -16,6 +17,7 @@ from environment_backups.google_drive.gdrive import GDrive
 @click.option('backup_folder', '-b', '--backup-folder', type=click.Path(exists=False), required=False)
 def backup(environment: str, projects_folder: Path, backup_folder: Path):
     if environment:
+        start = time.time()
         app_cfg = CONFIGURATION_MANAGER.get_current()
         env_cfg, _ = get_configuration_by_name(config_name=environment, app_configuration=app_cfg)
         if env_cfg is None:
@@ -24,7 +26,11 @@ def backup(environment: str, projects_folder: Path, backup_folder: Path):
         zip_list, b_folder = backup_environment(environment_name=environment)
 
         for i, zip_file in enumerate(zip_list, 1):
+            # TODO print only on verbose mode.
             click.secho(f'{i:3}. {zip_file.name}', fg='green')
+
+        elapsed = time.time() - start
+        click.secho(f'Saved {len(zip_list)} zip environments to {b_folder}. Took {elapsed:.2f} seconds.', fg='green')
 
         if env_cfg.get('google_drive_folder_id'):
             secrets_file = Path(env_cfg.get('google_authentication_file'))

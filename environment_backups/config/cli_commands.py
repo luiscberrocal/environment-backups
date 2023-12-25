@@ -94,8 +94,7 @@ def edit():
 
     prompt = 'Date format for backup folder prefix'
     configuration_dict['application']['date_format'] = click.prompt(
-        prompt,
-        default=configuration_dict['application']['date_format']
+        prompt, default=configuration_dict['application']['date_format']
     )
 
     prompt = 'Environment folder pattern name to parse. If several separate by a comma'
@@ -105,9 +104,7 @@ def edit():
 
     prompt = 'Default password for zip files'
     password = configuration_dict['application'].get('password')
-    configuration_dict['application']['password'] = click.prompt(prompt,
-                                                                 default=password,
-                                                                 value_proc=set_null_if_blank)
+    configuration_dict['application']['password'] = click.prompt(prompt, default=password, value_proc=set_null_if_blank)
 
     for i, env_configuration in enumerate(configuration_dict['configurations']):
         prompt = f'Do you want to edit the configuration for {env_configuration["name"]}'
@@ -133,6 +130,7 @@ config.add_command(edit)
 
 # TODO Add support for password at configurations level
 
+
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
     is_new = False
     if previous_configuration is None:
@@ -147,16 +145,15 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
 
     prompt = 'Projects folder'
     default_value = previous_configuration.get('projects_folder')
-    config_dict['projects_folder'] = click.prompt(prompt,
-                                                  type=click.Path(exists=True),
-                                                  default=default_value,
-                                                  value_proc=process_input_path)
+    config_dict['projects_folder'] = click.prompt(
+        prompt, type=click.Path(exists=True), default=default_value, value_proc=process_input_path
+    )
 
     prompt = 'Backup folder'
     default_value = previous_configuration.get('backup_folder')
-    config_dict['backup_folder'] = click.prompt(prompt, type=click.Path(exists=False),
-                                                default=default_value,
-                                                value_proc=process_input_path)
+    config_dict['backup_folder'] = click.prompt(
+        prompt, type=click.Path(exists=False), default=default_value, value_proc=process_input_path
+    )
 
     prompt = 'Computer name'
     # TODO Get computer name from hostname??
@@ -168,7 +165,8 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
         google_drive_support = click.confirm(prompt, default=default_value)
     else:
         google_drive_support = previous_configuration.get('google_drive_folder_id') or previous_configuration.get(
-            'google_authentication_file')
+            'google_authentication_file'
+        )
 
     if google_drive_support:
         prompt = 'Google drive folder id'
@@ -177,7 +175,8 @@ def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> D
 
         prompt = 'Google authentication file'
         default_value = previous_configuration.get('google_authentication_file')
-        config_dict['google_authentication_file'] = click.prompt(prompt, type=click.Path(exists=False),
-                                                                 default=default_value)
+        config_dict['google_authentication_file'] = click.prompt(
+            prompt, type=click.Path(exists=False), default=default_value
+        )
 
     return config_dict
