@@ -37,14 +37,14 @@ def sync_zip_folder_with_pwd(folder: Path, zip_file: Path, password: str = None)
                 zipf.write(file_path, file_path.relative_to(folder.parent))
 
 
-async def zip_folders_with_pwd(source_folder: Path, backup_folder: Path, password: str = None) -> List[Path]:
+async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, password: str = None) -> List[Path]:
     zipping_tasks = []
     zipped_files = []
 
     for item in source_folder.iterdir():
         if item.is_dir():
             zip_file_path = backup_folder / f"{item.name}.zip"
-            print(f'Zippging {item.name} to {zip_file_path}')
+            print(f'Zipping {item.name} to {zip_file_path}')
             zipping_tasks.append(zip_folder_with_pwd_async(item, zip_file_path, password))
             zipped_files.append(zip_file_path)
 
@@ -52,12 +52,12 @@ async def zip_folders_with_pwd(source_folder: Path, backup_folder: Path, passwor
     return zipped_files
 
 
-def main_sync():
-    source = Path.home() / 'Downloads'
-    backup = Path.home() / 'Documents' / '__zipping_test'
-    if backup.exists():
-        shutil.rmtree(backup)
-        backup.mkdir()
+def main_sync(source: Path, backup: Path, password: str):
+    # source = Path.home() / 'Downloads'
+    # backup = Path.home() / 'Documents' / '__zipping_test'
+    # if backup.exists():
+    #     shutil.rmtree(backup)
+    #     backup.mkdir()
     start = time.time()
     projects = list_all_projects(source)
 
@@ -72,23 +72,28 @@ def main_sync():
 
 
 # Example usage
-async def main():
-    source = Path.home() / 'Downloads'
-    backup = Path.home() / 'Documents' / '__zipping_test'
-    if backup.exists():
-        shutil.rmtree(backup)
-        backup.mkdir()
+async def main(source: Path, backup: Path, password: str):
+    # source = Path.home() / 'Downloads'
+    # backup = Path.home() / 'Documents' / '__zipping_test'
+    # if backup.exists():
+    #     shutil.rmtree(backup)
+    #     backup.mkdir()
 
-    zipped_files = await zip_folders_with_pwd(source, backup, None)
+    zipped_files = await zip_folders_with_pwd_async(source, backup, password)
     print("Zipped files:", zipped_files)
 
 
 if __name__ == '__main__':
     import time
+    source_folder = Path.home() / 'PycharmProjects'
+    backup_folder = Path.home() / 'Documents' / '__zipping_test'
+
+    if backup_folder.exists():
+        shutil.rmtree(backup_folder)
+        backup_folder.mkdir()
 
     start = time.time()
     asyncio.run(main())
-    print(f'Elapsed: {(time.time() - start):.2f} seconds.')
+    print(f'Async time elapsed: {(time.time() - start):.2f} seconds.')
 
     main_sync()
-
