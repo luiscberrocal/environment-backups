@@ -4,7 +4,8 @@ from pathlib import Path
 import pytest
 from freezegun import freeze_time
 
-from environment_backups.backups.backups import list_all_projects, get_projects_envs, backup_envs, backup_environment
+from environment_backups.backups.backups import backup_envs, backup_environment
+from environment_backups.backups.projects import list_all_projects, get_projects_envs
 from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
 from tests.factories import projects_folder_tree_factory
@@ -27,7 +28,7 @@ def test_list_all_projects_with_no_folders(mocker):
 
 def test_get_projects_envs_with_valid_data(mocker):
     # Mock list_all_projects to return specific folders
-    mocker.patch('environment_backups.backups.backups.list_all_projects', return_value=['project1', 'project2'])
+    mocker.patch('environment_backups.backups.projects.list_all_projects', return_value=['project1', 'project2'])
     # Mock Path.exists to return True
     mocker.patch('pathlib.Path.exists', return_value=True)
     expected_result = {
@@ -38,7 +39,7 @@ def test_get_projects_envs_with_valid_data(mocker):
 
 
 def test_get_projects_envs_with_no_projects(mocker):
-    mocker.patch('environment_backups.backups.backups.list_all_projects', return_value=[])
+    mocker.patch('environment_backups.backups.projects.list_all_projects', return_value=[])
     assert get_projects_envs(Path('/projects'), ['env_folder']) == {}
 
 
