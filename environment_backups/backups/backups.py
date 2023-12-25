@@ -8,11 +8,29 @@ from .. import CONFIGURATION_MANAGER
 from ..compression import zip_folder_with_pwd
 from ..config.configuration import get_configuration_by_name
 from ..exceptions import ConfigurationError
+from ..zipper import zip_folders_with_pwd_async
 
 logger = logging.getLogger()
 
 
-def backup_envs(
+def list_all_projects(projects_folder: Path) -> List[str]:
+    folders = [x.path for x in os.scandir(projects_folder) if x.is_dir()]
+    return folders
+
+
+def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> Dict[str, Any]:
+    folders = list_all_projects(project_folder)
+    folder_dict = dict()
+    for folder in folders:
+        path = Path(folder)
+        for environment_folder in environment_folders:
+            envs = path / environment_folder
+            if envs.exists():
+                folder_dict[path.name] = {'envs': envs}
+    return folder_dict
+
+
+async def backup_envs(
     *,
     projects_folder: Path,
     backup_folder: Path,
@@ -29,7 +47,10 @@ def backup_envs(
     zip_list = []
     use_async = False
     if use_async:
-        raise NotImplemented("Use asynchronous")
+        # FIXME Do async
+        zipped_files = await zip_folders_with_pwd_async(source_folder=projects_folder, backup_folder=b_folder,
+                                                        environment_folders=['.envs'], password=password)
+        return zipped_files, b_folder
     else:
         for project, v in project_envs_dict.items():
             zip_file = b_folder / f'{project}.zip'
