@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
+from google.auth.exceptions import RefreshError
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -30,7 +31,11 @@ class GDrive:
             # If token is expired, it will be refreshed,
             # else, we will request a new one.
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
+                try:
+                    creds.refresh(Request())
+                except RefreshError:
+                    flow = InstalledAppFlow.from_client_secrets_file(str(self.secrets_file), self.SCOPES)
+                    creds = flow.run_local_server(port=0)
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(str(self.secrets_file), self.SCOPES)
                 creds = flow.run_local_server(port=0)
