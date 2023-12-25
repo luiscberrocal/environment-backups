@@ -2,7 +2,7 @@
 
 __author__ = """Luis C. Berrocal"""
 __email__ = 'luis.berrocal.1942@gmail.com'
-__version__ = '1.2.6'
+__version__ = '1.2.7'
 
 from rich.console import Console
 
