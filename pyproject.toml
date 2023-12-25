@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "environment-backups"
-version = "1.2.3"
+version = "1.2.4"
 homepage = "https://github.com/luiscberrocal/environment-backups"
 description = "CLI Application to backup environment variables.."
 authors = ["Luis C. Berrocal <luis.berrocal.1942@gmail.com>"]
