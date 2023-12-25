@@ -2,10 +2,12 @@ import os
 from pathlib import Path
 
 from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
+from deprecated import deprecated
 
 from environment_backups.exceptions import EnvironmentBackupsError
 
-# TODO Deprecate an use zipper
+
+@deprecated(reason='Use zipper.zip_folder_with_pwd_async')
 def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = None):
     """
     Compresses a folder and creates a zip file with optional password protection.
