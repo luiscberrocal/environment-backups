@@ -7,7 +7,7 @@ from typing import List
 import click
 import pyzipper
 
-from environment_backups.backups.backups import list_all_projects
+from environment_backups.backups.projects import list_all_projects
 from environment_backups.compression import zip_folder_with_pwd
 
 
