@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from typing import List
 
+import click
 import pyzipper
 
 from environment_backups.backups.backups import list_all_projects
@@ -53,12 +54,6 @@ async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, p
 
 
 def main_sync(source: Path, backup: Path, password: str = None):
-    # source = Path.home() / 'Downloads'
-    # backup = Path.home() / 'Documents' / '__zipping_test'
-    # if backup.exists():
-    #     shutil.rmtree(backup)
-    #     backup.mkdir()
-    start = time.time()
     projects = list_all_projects(source)
 
     for project in projects:
@@ -67,47 +62,50 @@ def main_sync(source: Path, backup: Path, password: str = None):
         print(f'Zipping {folder_to_zip} to {zip_file}')
         zip_folder_with_pwd(zip_file=zip_file, folder_to_zip=folder_to_zip)
 
-    elapsed = time.time() - start
-    print(f"Folders {len(projects)} elapsed: {elapsed:.2f} seconds")
 
-
-async def main(source: Path, backup: Path, password: str = None):
-    # source = Path.home() / 'Downloads'
-    # backup = Path.home() / 'Documents' / '__zipping_test'
-    # if backup.exists():
-    #     shutil.rmtree(backup)
-    #     backup.mkdir()
-
+async def main_async(source: Path, backup: Path, password: str = None):
     zipped_files = await zip_folders_with_pwd_async(source, backup, password)
     print("Zipped files:", zipped_files)
 
 
+def clean_and_create_folder(folder: Path):
+    if folder.exists():
+        shutil.rmtree(folder)
+        folder.mkdir()
+    else:
+        folder.mkdir()
+
+
+def list_folder_contents(folder: Path):
+    for entry in folder.iterdir():
+        print(f'{entry.name} exists {entry.exists()} {entry.stat().st_size:,.2f}')
+
+
 if __name__ == '__main__':
     import time
+
     do_sync = False
     do_async = not do_sync
 
     source_folder_m = Path.home() / 'Downloads'
     backup_folder_m = Path.home() / 'Documents' / '__zipping_test'
 
-    if backup_folder_m.exists():
-        shutil.rmtree(backup_folder_m)
-        backup_folder_m.mkdir()
-    else:
-        backup_folder_m.mkdir()
+    clean_and_create_folder(backup_folder_m)
 
     if do_async:
-        # 66.15 se  11.68 s faster 17.66% faster
+        click.secho(f'Doing asynchronous backups...', fg='cyan')
+        # 66.15 se  11.68 s faster 17.66% faster on Dell
         start = time.time()
-        asyncio.run(main(source_folder_m, backup_folder_m))
+        asyncio.run(main_async(source_folder_m, backup_folder_m))
         print(f'Async time elapsed: {(time.time() - start):.2f} seconds.')
+        list_folder_contents(backup_folder_m)
 
     if do_sync:
-        if backup_folder_m.exists():
-            shutil.rmtree(backup_folder_m)
-            backup_folder_m.mkdir()
-        else:
-            backup_folder_m.mkdir()
-
-        # 77.83 s
+        click.secho(f'Doing synchronous backups', fg='cyan')
+        clean_and_create_folder(backup_folder_m)
+        # 77.83 s on Dell
+        start = time.time()
         main_sync(source_folder_m, backup_folder_m)
+        elapsed = time.time() - start
+        print(f"Sync time elapsed: {elapsed:.2f} seconds")
+        list_folder_contents(backup_folder_m)
