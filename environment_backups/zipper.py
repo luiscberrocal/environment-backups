@@ -52,7 +52,7 @@ async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, p
     return zipped_files
 
 
-def main_sync(source: Path, backup: Path, password: str):
+def main_sync(source: Path, backup: Path, password: str = None):
     # source = Path.home() / 'Downloads'
     # backup = Path.home() / 'Documents' / '__zipping_test'
     # if backup.exists():
@@ -71,8 +71,7 @@ def main_sync(source: Path, backup: Path, password: str):
     print(f"Folders {len(projects)} elapsed: {elapsed:.2f} seconds")
 
 
-# Example usage
-async def main(source: Path, backup: Path, password: str):
+async def main(source: Path, backup: Path, password: str = None):
     # source = Path.home() / 'Downloads'
     # backup = Path.home() / 'Documents' / '__zipping_test'
     # if backup.exists():
@@ -85,15 +84,30 @@ async def main(source: Path, backup: Path, password: str):
 
 if __name__ == '__main__':
     import time
-    source_folder = Path.home() / 'PycharmProjects'
-    backup_folder = Path.home() / 'Documents' / '__zipping_test'
+    do_sync = False
+    do_async = not do_sync
 
-    if backup_folder.exists():
-        shutil.rmtree(backup_folder)
-        backup_folder.mkdir()
+    source_folder_m = Path.home() / 'Downloads'
+    backup_folder_m = Path.home() / 'Documents' / '__zipping_test'
 
-    start = time.time()
-    asyncio.run(main())
-    print(f'Async time elapsed: {(time.time() - start):.2f} seconds.')
+    if backup_folder_m.exists():
+        shutil.rmtree(backup_folder_m)
+        backup_folder_m.mkdir()
+    else:
+        backup_folder_m.mkdir()
 
-    main_sync()
+    if do_async:
+        # 66.15 se  11.68 s faster 17.66% faster
+        start = time.time()
+        asyncio.run(main(source_folder_m, backup_folder_m))
+        print(f'Async time elapsed: {(time.time() - start):.2f} seconds.')
+
+    if do_sync:
+        if backup_folder_m.exists():
+            shutil.rmtree(backup_folder_m)
+            backup_folder_m.mkdir()
+        else:
+            backup_folder_m.mkdir()
+
+        # 77.83 s
+        main_sync(source_folder_m, backup_folder_m)
