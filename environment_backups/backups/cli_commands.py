@@ -1,5 +1,7 @@
+import asyncio
 import sys
 import time
+from functools import wraps
 from pathlib import Path
 
 import click
@@ -11,11 +13,20 @@ from environment_backups.exceptions import EnvironmentBackupsError
 from environment_backups.google_drive.gdrive import GDrive
 
 
+def async_cmd(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        return asyncio.run(func(*args, **kwargs))
+
+    return wrapper
+
+
 @click.command()
+@async_cmd
 @click.option('environment', '-e', '--environment', type=str, required=False)
 @click.option('projects_folder', '-p', '--projects-folder', type=click.Path(exists=True), required=False)
 @click.option('backup_folder', '-b', '--backup-folder', type=click.Path(exists=False), required=False)
-def backup(environment: str, projects_folder: Path, backup_folder: Path):
+async def backup(environment: str, projects_folder: Path, backup_folder: Path):
     if environment:
         start = time.time()
         app_cfg = CONFIGURATION_MANAGER.get_current()
@@ -23,7 +34,7 @@ def backup(environment: str, projects_folder: Path, backup_folder: Path):
         if env_cfg is None:
             click.secho(f'No environment configuration found for {environment}.', fg='red')
             sys.exit(100)
-        zip_list, b_folder = backup_environment(environment_name=environment)
+        zip_list, b_folder = await backup_environment(environment_name=environment)
 
         for i, zip_file in enumerate(zip_list, 1):
             # TODO print only on verbose mode.
