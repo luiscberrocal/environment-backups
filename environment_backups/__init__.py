@@ -2,11 +2,11 @@
 
 __author__ = """Luis C. Berrocal"""
 __email__ = 'luis.berrocal.1942@gmail.com'
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 
 from rich.console import Console
 
-from environment_backups.config.configuration import ConfigurationManager
+from .config.configuration import ConfigurationManager
 
 CONFIGURATION_MANAGER = ConfigurationManager(version=__version__)
 
@@ -15,11 +15,12 @@ CONSOLE = Console()
 
 def logger_configuration():
     import logging.config
+
     from .constants import LOGGING
+
     logging.config.dictConfig(LOGGING)
 
 
 logger_configuration()
 
 # TODO Add tox support
-# TODO Clean toml file for python versions

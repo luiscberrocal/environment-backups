@@ -12,11 +12,7 @@ def test_init_existing_values(mock_config_manager, tmp_path):
     result = runner.invoke(config, ['init'])
     output_lines = result.output.split('\n')
 
-    expected_lines = [
-        f"Init configuration file: {toml_config_file}",
-        "Configuration already exists.",
-        ""
-    ]
+    expected_lines = [f"Init configuration file: {toml_config_file}", "Configuration already exists.", ""]
 
     assert len(output_lines) == 3
     for i, line in enumerate(output_lines):
@@ -28,11 +24,19 @@ def test_init_existing_values(mock_config_manager, tmp_path):
 def test_init_command(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
-    input_list = ['%Y-%m-%d', '.envs', '', 'my_config_name', str(tmp_path), str(tmp_path), "my_computer_name", 'N', 'N',
-                  'y']
-    mock_inputs = '\n'.join(
-        input_list
-    )
+    input_list = [
+        '%Y-%m-%d',
+        '.envs',
+        '',
+        'my_config_name',
+        str(tmp_path),
+        str(tmp_path),
+        "my_computer_name",
+        'N',
+        'N',
+        'y',
+    ]
+    mock_inputs = '\n'.join(input_list)
     result = runner.invoke(config, ['init'], input=mock_inputs)
 
     assert result.exit_code == 0
@@ -42,15 +46,23 @@ def test_init_command(mock_config_manager, tmp_path):
     if "Yes" in mock_inputs.split('\n'):
         mock_config_manager.save.assert_called_once()
 
+
 def test_init_expand_folder(mock_config_manager, tmp_path):
     mock_config_manager.get_current.return_value = {}
     runner = CliRunner()
-    input_list = ['%Y-%m-%d', '.envs', '', 'my_config_name', '~/Documents', str(tmp_path), "my_computer_name", 'N',
-                  'N',
-                  'y']
-    mock_inputs = '\n'.join(
-        input_list
-    )
+    input_list = [
+        '%Y-%m-%d',
+        '.envs',
+        '',
+        'my_config_name',
+        '~/Documents',
+        str(tmp_path),
+        "my_computer_name",
+        'N',
+        'N',
+        'y',
+    ]
+    mock_inputs = '\n'.join(input_list)
     result = runner.invoke(config, ['init'], input=mock_inputs)
 
     assert result.exit_code == 0
