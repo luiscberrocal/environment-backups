@@ -98,3 +98,11 @@ def configuration_factory(
     application_configuration = ApplicationConfiguration(application=app, configurations=configs)
 
     return application_configuration
+
+
+# if __name__ == '__main__':
+#     project_count = 15
+#     projects_folders_ = [f'project_{i}' for i in range(project_count)]
+#     root_folder_ = Path().home() / 'Documents'
+#     projects_folder_tree_factory(root_folder=root_folder_, projects_folders=projects_folders_,
+#                                  env_file_count=1)
