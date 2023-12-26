@@ -22,6 +22,7 @@ def main():
 
 @click.command()
 def about():
+    # Add available configurations
     app_name = CONFIGURATION_MANAGER.APP_NAME.replace('-', ' ').title()
     content: List[str] = []
     content.append(f'Operating System: {sys.platform}')

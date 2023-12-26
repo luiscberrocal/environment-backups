@@ -125,11 +125,11 @@ config.add_command(reset)
 config.add_command(edit)
 
 
-# TODO add backup of environment by command environment-backups config backup
 # TODO Add restore backup capabilities
 
 # TODO Add support for password at configurations level
-# TODO Add sanity check.
+
+# TODO Add a sanity check to check the configuration
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
     is_new = False
