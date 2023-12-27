@@ -20,6 +20,7 @@ async def backup_envs(
     environment_folders: List[str],
     password: str = None,
     date_format='%Y%m%d_%H',
+    use_async: bool = False
 ) -> Tuple[List[Path], Path]:
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
     # TODO add computer name to the folder?? or the file??
@@ -28,7 +29,6 @@ async def backup_envs(
     b_folder.mkdir(exist_ok=True)
 
     zip_list = []
-    use_async = False
     if use_async:
         # FIXME Do async
         zipped_files = await zip_folders_with_pwd_async(source_folder=projects_folder, backup_folder=b_folder,
@@ -64,7 +64,7 @@ def backup_environment_legacy(environment_name: str) -> Tuple[List[Path], Path]:
     return zip_list, b_folder
 
 
-async def backup_environment(environment_name: str) -> Tuple[List[Path], Path]:
+async def backup_environment(environment_name: str, use_async: bool) -> Tuple[List[Path], Path]:
     app_configuration = CONFIGURATION_MANAGER.get_current()
     cfg, _ = get_configuration_by_name(environment_name, app_configuration)
     if cfg is None:
@@ -82,5 +82,6 @@ async def backup_environment(environment_name: str) -> Tuple[List[Path], Path]:
         environment_folders=environment_folders,
         password=pwd,
         date_format=date_format,
+        use_async=use_async
     )
     return zip_list, b_folder

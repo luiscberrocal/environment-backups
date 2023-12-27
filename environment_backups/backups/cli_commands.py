@@ -26,7 +26,8 @@ def async_cmd(func):
 @click.option('environment', '-e', '--environment', type=str, required=False)
 @click.option('projects_folder', '-p', '--projects-folder', type=click.Path(exists=True), required=False)
 @click.option('backup_folder', '-b', '--backup-folder', type=click.Path(exists=False), required=False)
-async def backup(environment: str, projects_folder: Path, backup_folder: Path):
+@click.option('use_async', '--async', is_flag=True, default=False)
+async def backup(environment: str, projects_folder: Path, backup_folder: Path, use_async: bool ):
     if environment:
         start = time.time()
         app_cfg = CONFIGURATION_MANAGER.get_current()
@@ -34,7 +35,7 @@ async def backup(environment: str, projects_folder: Path, backup_folder: Path):
         if env_cfg is None:
             click.secho(f'No environment configuration found for {environment}.', fg='red')
             sys.exit(100)
-        zip_list, b_folder = await backup_environment(environment_name=environment)
+        zip_list, b_folder = await backup_environment(environment_name=environment, use_async=use_async)
 
         for i, zip_file in enumerate(zip_list, 1):
             # TODO print only on verbose mode.
