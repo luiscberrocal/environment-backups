@@ -132,7 +132,7 @@ async def test_backup_environments_with_valid_configuration(tmp_path, fixtures_f
     mocker.patch("environment_backups.backups.backups.CONFIGURATION_MANAGER.get_current",
                  return_value=config)
     with freeze_time(mock_date):
-        zip_list, b_folder = await backup_environment('test_env')
+        zip_list, b_folder = await backup_environment('test_env', use_async=False)
 
     # Assertions
     assert len(zip_list) == 1
@@ -148,5 +148,5 @@ async def test_backup_environments_with_invalid_configuration(mocker):
 
     # Test with an invalid configuration to raise ConfigurationError
     with pytest.raises(ConfigurationError) as excinfo:
-        await backup_environment('invalid_env')
+        await backup_environment('invalid_env', use_async=False)
     assert 'No environment configuration found for "invalid_env"' in str(excinfo.value)
