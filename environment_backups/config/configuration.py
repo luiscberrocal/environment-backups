@@ -4,8 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
 import toml
-
-from .utils import backup_file
+from simple_backups.backups import backup_file
 
 
 class ConfigurationManager:

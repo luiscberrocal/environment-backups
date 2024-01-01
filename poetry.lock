@@ -1949,6 +1949,20 @@ cryptography = ">=2.0"
 jeepney = ">=0.6"
 
 [[package]]
+name = "simple-backups"
+version = "0.3.2"
+description = "Simple backups library."
+optional = false
+python-versions = ">=3.10,<3.13"
+files = [
+    {file = "simple_backups-0.3.2-py3-none-any.whl", hash = "sha256:8190b85526b2cfd2ab795e3b190cddbdbc3f5647519696c1e6598e99f688ac24"},
+    {file = "simple_backups-0.3.2.tar.gz", hash = "sha256:cc68b3cbdbb85e95fb1a456eba6cb5ff2b982eb5ad5320a615c901e82c538e24"},
+]
+
+[package.dependencies]
+pydantic = ">=2.5.3,<3.0.0"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -2235,4 +2249,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "48a5d3c544bf2895859e55ba2cab22f92a2b0d496806550ddc9827dec83b64d1"
+content-hash = "ac98a42ebe15877afc3cd1e2c286826c43dfa0fce3b8f9cb4f4254735b125414"
