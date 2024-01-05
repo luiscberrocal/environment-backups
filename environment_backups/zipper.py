@@ -45,11 +45,11 @@ async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, e
 
     for item in source_folder.iterdir():
         if item.is_dir():
-            # Support more than one environment folder
+            # FIXME Support more than one environment folder
             env_folder = item / environment_folders[0]
             if env_folder.exists():
                 zip_file_path = backup_folder / f"{item.name}.zip"
-                print(f'Zipping {item.name} to {zip_file_path}')
+                # print(f'Zipping {item.name} to {zip_file_path} <<')
                 zipping_tasks.append(zip_folder_with_pwd_async(env_folder, zip_file_path, password))
                 zipped_files.append(zip_file_path)
 
