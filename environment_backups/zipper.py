@@ -46,11 +46,11 @@ async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, e
     folders_to_search = [folder for folder in source_folder.iterdir()]
 
     total_folders = len(folders_to_search)
-    print(f"Found {total_folders}")
+    # print(f"Found {total_folders}")
     with Progress() as progress_bar:
-        task2 = progress_bar.add_task("[green]Processing...", total=total_folders)
+        task2 = progress_bar.add_task("[green]Processing...", total=100.0)
         for i, item in enumerate(folders_to_search, 1):
-            print(item)
+            # print(item)
             if item.is_dir():
                 # FIXME Support more than one environment folder
                 env_folder = item / environment_folders[0]
@@ -59,10 +59,10 @@ async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, e
                     # print(f'Zipping {item.name} to {zip_file_path} <<')
                     zipping_tasks.append(zip_folder_with_pwd_async(env_folder, zip_file_path, password))
                     zipped_files.append(zip_file_path)
-            advance_percentage = i / total_folders
-            print(advance_percentage)
+            advance_percentage = 100.00 / total_folders
+            # print(advance_percentage)
             progress_bar.update(task2, advance=advance_percentage)
-            await asyncio.sleep(1.0)
+            # await asyncio.sleep(1.0)
 
     await asyncio.gather(*zipping_tasks)
     return zipped_files
