@@ -6,6 +6,7 @@ from typing import List
 
 import click
 import pyzipper
+from rich.progress import Progress
 
 from environment_backups.backups.projects import list_all_projects
 from environment_backups.compression import zip_folder_with_pwd
@@ -42,16 +43,26 @@ async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, e
                                      password: str = None) -> List[Path]:
     zipping_tasks = []
     zipped_files = []
+    folders_to_search = [folder for folder in source_folder.iterdir()]
 
-    for item in source_folder.iterdir():
-        if item.is_dir():
-            # Support more than one environment folder
-            env_folder = item / environment_folders[0]
-            if env_folder.exists():
-                zip_file_path = backup_folder / f"{item.name}.zip"
-                print(f'Zipping {item.name} to {zip_file_path}')
-                zipping_tasks.append(zip_folder_with_pwd_async(env_folder, zip_file_path, password))
-                zipped_files.append(zip_file_path)
+    total_folders = len(folders_to_search)
+    # print(f"Found {total_folders}")
+    with Progress() as progress_bar:
+        task2 = progress_bar.add_task("[green]Processing...", total=100.0)
+        for i, item in enumerate(folders_to_search, 1):
+            # print(item)
+            if item.is_dir():
+                # FIXME Support more than one environment folder
+                env_folder = item / environment_folders[0]
+                if env_folder.exists():
+                    zip_file_path = backup_folder / f"{item.name}.zip"
+                    # print(f'Zipping {item.name} to {zip_file_path} <<')
+                    zipping_tasks.append(zip_folder_with_pwd_async(env_folder, zip_file_path, password))
+                    zipped_files.append(zip_file_path)
+            advance_percentage = 100.00 / total_folders
+            # print(advance_percentage)
+            progress_bar.update(task2, advance=advance_percentage)
+            # await asyncio.sleep(1.0)
 
     await asyncio.gather(*zipping_tasks)
     return zipped_files
@@ -69,7 +80,7 @@ def main_sync(source: Path, backup: Path, password: str = None):
 
 
 async def main_async(source: Path, backup: Path, password: str = None):
-    zipped_files = await zip_folders_with_pwd_async(source, backup,['.envs'], password)
+    zipped_files = await zip_folders_with_pwd_async(source, backup, ['.envs'], password)
     print("Zipped files:", zipped_files)
 
 
