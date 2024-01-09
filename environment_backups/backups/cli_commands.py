@@ -5,12 +5,12 @@ from functools import wraps
 from pathlib import Path
 
 import click
+from gdrive_pydantic_wrapper.google_drive.gdrive import GDrive
 
 from environment_backups import CONFIGURATION_MANAGER
 from environment_backups.backups.backups import backup_environment, backup_envs
 from environment_backups.config.configuration import get_configuration_by_name
 from environment_backups.exceptions import EnvironmentBackupsError
-from environment_backups.google_drive.gdrive import GDrive
 
 
 def async_cmd(func):
