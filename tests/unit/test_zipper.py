@@ -15,8 +15,9 @@ async def test_zip_folders_with_pwd_async(tmp_path):
 
     source_folder = tmp_path / 'MyProjects'
 
-    results = await zip_folders_with_pwd_async(source_folder=source_folder, backup_folder=backup_folder,
-                                               environment_folders=['.envs'], password=None)
+    results = await zip_folders_with_pwd_async(
+        source_folder=source_folder, backup_folder=backup_folder, environment_folders=['.envs'], password=None
+    )
 
     zip_file = backup_folder / 'project1.zip'
     assert zip_file.exists()

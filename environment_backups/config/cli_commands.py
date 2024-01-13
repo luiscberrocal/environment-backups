@@ -131,6 +131,7 @@ config.add_command(edit)
 
 # TODO Add a sanity check to check the configuration
 
+
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
     is_new = False
     if previous_configuration is None:

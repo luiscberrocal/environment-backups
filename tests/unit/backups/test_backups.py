@@ -4,8 +4,8 @@ from pathlib import Path
 import pytest
 from freezegun import freeze_time
 
-from environment_backups.backups.backups import backup_envs, backup_environment
-from environment_backups.backups.projects import list_all_projects, get_projects_envs
+from environment_backups.backups.backups import backup_environment, backup_envs
+from environment_backups.backups.projects import get_projects_envs, list_all_projects
 from environment_backups.compression import zip_folder_with_pwd
 from environment_backups.exceptions import ConfigurationError
 from tests.factories import projects_folder_tree_factory
@@ -129,8 +129,7 @@ async def test_backup_environments_with_valid_configuration(tmp_path, fixtures_f
         'environment_backups.backups.backups.get_configuration_by_name', return_value=(mock_configuration, 100.0)
     )
     # Mock CONFIGURATION_MANAGER and get_configuration_by_name
-    mocker.patch("environment_backups.backups.backups.CONFIGURATION_MANAGER.get_current",
-                 return_value=config)
+    mocker.patch("environment_backups.backups.backups.CONFIGURATION_MANAGER.get_current", return_value=config)
     with freeze_time(mock_date):
         zip_list, b_folder = await backup_environment('test_env', use_async=False)
 
