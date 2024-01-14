@@ -2,7 +2,7 @@ import asyncio
 import random
 import time
 from pathlib import Path
-from typing import Iterable, Any
+from typing import Any, Iterable
 
 from environment_backups.zipper import sync_zip_folder_with_pwd
 
@@ -22,8 +22,8 @@ async def async_zipping(file: Path, folder: Path) -> Path:
 
 async def async_zipping_folder(folder: Path, zip_file: Path) -> Path:
     print(f"Zipping {folder}")
-    #zipping_wait = random.random() * 5
-    #await asyncio.sleep(zipping_wait)
+    # zipping_wait = random.random() * 5
+    # await asyncio.sleep(zipping_wait)
     start = time.perf_counter()
     # zipped_file = folder / f'{folder.stem}.zip'
     z_file = sync_zip_folder_with_pwd(folder=folder, zip_file=zip_file)
@@ -35,7 +35,7 @@ async def async_zipping_folder(folder: Path, zip_file: Path) -> Path:
     emulate_upload = False
     if emulate_upload:
         print(f'Uploading {zip_file}')
-        upload_wait = elapsed * 3 #random.random() * 5
+        upload_wait = elapsed * 3  # random.random() * 5
         await asyncio.sleep(upload_wait)
         print(f'Uploaded {zip_file} took {upload_wait} seconds')
     return zip_file
@@ -59,7 +59,7 @@ async def zip_multiple_folders(folders: Iterable[Path], backup_folder: Path) -> 
 
 
 if __name__ == '__main__':
-    """For ziping it is better to use sync. """
+    """For ziping it is better to use sync."""
     start_time = time.time()
     data_path = Path().home() / 'Downloads'
     source_folders = [f for f in data_path.iterdir() if f.is_dir()]
