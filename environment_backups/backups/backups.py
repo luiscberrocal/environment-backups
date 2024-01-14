@@ -24,7 +24,6 @@ async def backup_envs(
     use_async: bool = False,
 ) -> Tuple[List[Path], Path]:
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
-    # TODO add computer name to the folder?? or the file??
     timestamp = datetime.now().strftime(date_format)
     if computer_name is None:
         b_folder = backup_folder / timestamp

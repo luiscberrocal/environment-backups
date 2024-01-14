@@ -71,4 +71,3 @@ def legacy_backup(backup_folder, projects_folder):
 
 
 # TODO add backup by name. environment-backups backup --name adelantos --upload
-# TODO Upload to google after excectuting a backup.
