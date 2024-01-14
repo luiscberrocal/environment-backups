@@ -3,12 +3,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
+from .projects import get_projects_envs
 from .. import CONFIGURATION_MANAGER
 from ..compression import zip_folder_with_pwd
 from ..config.configuration import get_configuration_by_name
 from ..exceptions import ConfigurationError
 from ..zipper import zip_folders_with_pwd_async
-from .projects import get_projects_envs
 
 logger = logging.getLogger()
 
@@ -18,6 +18,7 @@ async def backup_envs(
     projects_folder: Path,
     backup_folder: Path,
     environment_folders: List[str],
+    computer_name: str = None,
     password: str = None,
     date_format='%Y%m%d_%H',
     use_async: bool = False,
@@ -25,7 +26,10 @@ async def backup_envs(
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
     # TODO add computer name to the folder?? or the file??
     timestamp = datetime.now().strftime(date_format)
-    b_folder = backup_folder / timestamp
+    if computer_name is None:
+        b_folder = backup_folder / timestamp
+    else:
+        b_folder = backup_folder / f'{timestamp}_{computer_name}'
     b_folder.mkdir(exist_ok=True)
 
     zip_list = []
@@ -76,11 +80,13 @@ async def backup_environment(environment_name: str, use_async: bool) -> Tuple[Li
     date_format = app_configuration['application'].get('date_format')
     project_folder = Path(cfg['projects_folder'])
     backup_folder = Path(cfg['backup_folder'])
+    computer_name = cfg.get('computer_name')
 
     zip_list, b_folder = await backup_envs(
         projects_folder=project_folder,
         backup_folder=backup_folder,
         environment_folders=environment_folders,
+        computer_name=computer_name,
         password=pwd,
         date_format=date_format,
         use_async=use_async,

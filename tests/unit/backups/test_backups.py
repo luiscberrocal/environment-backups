@@ -135,6 +135,39 @@ async def test_backup_environments_with_valid_configuration(tmp_path, fixtures_f
 
     # Assertions
     assert len(zip_list) == 1
+    assert zip_list[0] == backup_folder / '20120114_13_adl-computer' / 'project1.zip'
+    assert zip_list[0].exists()
+    assert b_folder == backup_folder / '20120114_13_adl-computer'
+
+
+@pytest.mark.asyncio
+async def test_backup_environments_without_computer_name(tmp_path, fixtures_folder, mocker):
+    mock_config_file = fixtures_folder / 'app_configuration.json'
+    with open(mock_config_file, 'r') as f:
+        config = json.load(f)
+
+    projects_folder, _ = projects_folder_tree_factory(root_folder=tmp_path, projects_folder_name='PycharmProjects')
+    backup_folder = tmp_path / 'backups'
+    backup_folder.mkdir()
+    mock_date = '2012-01-14 13:01:45'
+    mock_configuration = {
+        "name": "test_env",
+        "projects_folder": f"{projects_folder}",
+        "backup_folder": f"{backup_folder}",
+        # "computer_name": "adl-computer",
+    }
+    config['configurations'].append(mock_configuration)
+
+    mocker.patch(
+        'environment_backups.backups.backups.get_configuration_by_name', return_value=(mock_configuration, 100.0)
+    )
+    # Mock CONFIGURATION_MANAGER and get_configuration_by_name
+    mocker.patch("environment_backups.backups.backups.CONFIGURATION_MANAGER.get_current", return_value=config)
+    with freeze_time(mock_date):
+        zip_list, b_folder = await backup_environment('test_env', use_async=False)
+
+    # Assertions
+    assert len(zip_list) == 1
     assert zip_list[0] == backup_folder / '20120114_13' / 'project1.zip'
     assert zip_list[0].exists()
     assert b_folder == backup_folder / '20120114_13'
