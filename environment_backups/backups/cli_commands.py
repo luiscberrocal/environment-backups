@@ -27,7 +27,7 @@ def async_cmd(func):
 @click.option('projects_folder', '-p', '--projects-folder', type=click.Path(exists=True), required=False)
 @click.option('backup_folder', '-b', '--backup-folder', type=click.Path(exists=False), required=False)
 @click.option('use_async', '--async', is_flag=True, default=False)
-async def backup(environment: str, projects_folder: Path, backup_folder: Path, use_async: bool ):
+async def backup(environment: str, projects_folder: Path, backup_folder: Path, use_async: bool):
     if environment:
         start = time.time()
         app_cfg = CONFIGURATION_MANAGER.get_current()
@@ -69,5 +69,5 @@ def legacy_backup(backup_folder, projects_folder):
     for i, zip_file in enumerate(zip_list, 1):
         click.secho(f'{i:3}. {zip_file.name}', fg='green')
 
+
 # TODO add backup by name. environment-backups backup --name adelantos --upload
-# TODO Upload to google after excectuting a backup.

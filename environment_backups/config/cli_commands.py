@@ -3,7 +3,6 @@ import sys
 from typing import Any, Dict
 
 import click
-from rich.pretty import pprint
 
 from environment_backups import CONFIGURATION_MANAGER
 from environment_backups.constants import DEFAULT_DATE_FORMAT, DEFAULT_ENV_FOLDER
@@ -12,17 +11,6 @@ from environment_backups.constants import DEFAULT_DATE_FORMAT, DEFAULT_ENV_FOLDE
 @click.group()
 def config():
     """Configuration entrypoint."""
-
-
-def custom_control_c_handler(config_dict: Dict[str, Any], signal_numer: int, frame: Any):
-    # save = click.confirm('Do you want to save your configuration?')
-    # save = input('Save?')
-    save = True
-    pprint(config_dict)
-    if save:
-        sys.exit(0)
-    else:
-        sys.exit(100)
 
 
 @click.command()
@@ -130,6 +118,7 @@ config.add_command(edit)
 # TODO Add support for password at configurations level
 
 # TODO Add a sanity check to check the configuration
+
 
 def prompt_for_configuration(previous_configuration: Dict[str, Any] = None) -> Dict[str, Any]:
     is_new = False

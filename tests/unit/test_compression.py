@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from environment_backups.compression import zip_folder_with_pwd, unzip_file
+from environment_backups.compression import unzip_file, zip_folder_with_pwd
 from environment_backups.exceptions import EnvironmentBackupsError
 
 

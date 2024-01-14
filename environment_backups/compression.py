@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
-from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
 from deprecated import deprecated
+from pyzipper import WZ_AES, ZIP_DEFLATED, AESZipFile
 
 from environment_backups.exceptions import EnvironmentBackupsError
 
@@ -34,8 +34,7 @@ def zip_folder_with_pwd(zip_file: Path, folder_to_zip: Path, password: str = Non
 
     encryption = WZ_AES if password else None
 
-    with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption,
-                    strict_timestamps=False) as zf:
+    with AESZipFile(zip_file, 'w', compression=ZIP_DEFLATED, encryption=encryption, strict_timestamps=False) as zf:
         if password:
             pwd = password.encode('utf-8')
             zf.setpassword(pwd)

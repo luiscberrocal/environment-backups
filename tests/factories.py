@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from environment_backups.config.schemas import Application, Configuration, ApplicationConfiguration
+from environment_backups.config.schemas import Application, ApplicationConfiguration, Configuration
 
 
 def projects_folder_tree_factory(

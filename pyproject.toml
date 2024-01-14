@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "environment-backups"
-version = "1.4.0"
+version = "1.5.0"
 homepage = "https://github.com/luiscberrocal/environment-backups"
 description = "CLI Application to backup environment variables."
 authors = ["Luis C. Berrocal <luis.berrocal.1942@gmail.com>"]
@@ -64,7 +64,6 @@ mkdocs-autorefs = "^0.4.1"
 
 [tool.poetry.scripts]
 environment-backups = 'environment_backups.cli:main'
-environment-backups-l = 'environment_backups._legacy.cli:main_arg_parser'
 
 # pyproject.toml
 [tool.pytest.ini_options]

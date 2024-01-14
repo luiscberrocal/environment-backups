@@ -24,10 +24,14 @@ def main():
 def about():
     # Add available configurations
     app_name = CONFIGURATION_MANAGER.APP_NAME.replace('-', ' ').title()
-    content: List[str] = [f'Operating System: {sys.platform}', f'Python : {python_version()}',
-                          f'Configuration file: {CONFIGURATION_MANAGER.config_file}']
+    content: List[str] = [
+        f'Operating System: {sys.platform}',
+        f'Python : {python_version()}',
+        f'Configuration file: {CONFIGURATION_MANAGER.config_file}',
+    ]
     panel = Panel('\n'.join(content), title=app_name, subtitle=f"version: {current_version}")
     CONSOLE.print(panel)
+
 
 # TODO add configurations and status
 

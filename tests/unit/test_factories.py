@@ -1,7 +1,7 @@
 import shutil
 
 from environment_backups.constants import DEFAULT_DATE_FORMAT
-from tests.factories import projects_folder_tree_factory, configuration_factory
+from tests.factories import configuration_factory, projects_folder_tree_factory
 
 
 def test_create_projects_folder(tmp_path):

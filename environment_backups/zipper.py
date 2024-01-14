@@ -17,13 +17,7 @@ async def zip_folder_with_pwd_async(folder: Path, zip_file: Path, password: str 
     Asynchronously compresses a single folder into a zip file with optional password protection.
     """
     loop = asyncio.get_running_loop()
-    await loop.run_in_executor(
-        None,
-        sync_zip_folder_with_pwd,
-        folder,
-        zip_file,
-        password
-    )
+    await loop.run_in_executor(None, sync_zip_folder_with_pwd, folder, zip_file, password)
 
 
 def sync_zip_folder_with_pwd(folder: Path, zip_file: Path, password: str = None):
@@ -39,8 +33,9 @@ def sync_zip_folder_with_pwd(folder: Path, zip_file: Path, password: str = None)
                 zipf.write(file_path, file_path.relative_to(folder.parent))
 
 
-async def zip_folders_with_pwd_async(source_folder: Path, backup_folder: Path, environment_folders: List[str],
-                                     password: str = None) -> List[Path]:
+async def zip_folders_with_pwd_async(
+    source_folder: Path, backup_folder: Path, environment_folders: List[str], password: str = None
+) -> List[Path]:
     zipping_tasks = []
     zipped_files = []
     folders_to_search = [folder for folder in source_folder.iterdir()]
