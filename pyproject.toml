@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "environment-backups"
-version = "1.5.0"
+version = "1.5.1"
 homepage = "https://github.com/luiscberrocal/environment-backups"
 description = "CLI Application to backup environment variables."
 authors = ["Luis C. Berrocal <luis.berrocal.1942@gmail.com>"]
@@ -54,12 +54,11 @@ pytest-asyncio = "^0.23.2"
 
 
 [tool.poetry.group.doc.dependencies]
-mkdocs = "^1.4.2"
-mkdocs-include-markdown-plugin = "^3.9.1"
-mkdocs-material = "^8.5.10"
-mkdocstrings = "^0.19.0"
-mkdocs-autorefs = "^0.4.1"
-
+mkdocs = "^1.5.3"
+mkdocs-include-markdown-plugin = "^6.0.3"
+mkdocs-material = "^9.4.6"
+mkdocs-autorefs = "^0.5.0"
+mkdocstrings = {extras = ["python"], version = "^0.24.0"}
 
 
 [tool.poetry.scripts]
