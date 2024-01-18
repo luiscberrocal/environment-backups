@@ -43,11 +43,11 @@ extra:
   social:
     - icon: fontawesome/brands/twitter
       # replace with your own tweet link below
-      link: https://github.com/waynerv/cookiecutter-pypackage
+      link: https://github.com/luiscberrocal/cookiecutter-pypackage
       name: Tweet
     - icon: fontawesome/brands/facebook
       # replace with your own facebook link below
-      link: https://github.com/waynerv/cookiecutter-pypackage
+      link: https://github.com/luiscberrocal/cookiecutter-pypackage
       name: Facebook
     - icon: fontawesome/brands/github
       link: https://github.com/luiscberrocal/environment-backups
@@ -70,9 +70,3 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-  # to enable disqus, uncomment the following and put your disqus id below
-  # disqus: disqus_id
-# uncomment the following and put your google tracking id below to enable GA
-#google_analytics:
-  #- UA-xxx
-  #- auto
