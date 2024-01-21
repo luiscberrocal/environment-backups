@@ -14,9 +14,9 @@ async def scheduler():
     tasks = [sleeper(i) for i in range(100)]
     total_tasks = len(tasks)
     for task in track(
-            asyncio.as_completed(tasks),
-            description="Processing...",
-            total=total_tasks,
+        asyncio.as_completed(tasks),
+        description="Processing...",
+        total=total_tasks,
     ):
         await task
 
@@ -42,4 +42,5 @@ def run_coroutine(coro):
 
 
 if __name__ == "__main__":
+    """This DOES NOT work"""
     run_coroutine(scheduler())

@@ -58,8 +58,9 @@ if __name__ == '__main__':
     source_folders = [f for f in data_path.iterdir() if f.is_dir()]
     with Progress() as progress:
         tsk = progress.add_task("[red]Downloading...", total=100)
-        zip_results = asyncio.run(zip_multiple_folders(folders=source_folders, backup_folder=data_path,
-                                                       progress=progress, task=tsk))
+        zip_results = asyncio.run(
+            zip_multiple_folders(folders=source_folders, backup_folder=data_path, progress=progress, task=tsk)
+        )
     elapsed = time.time() - start_time
     print(f'Zipping took {elapsed} seconds')
     print(zip_results)
