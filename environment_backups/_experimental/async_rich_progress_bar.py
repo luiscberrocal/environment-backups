@@ -2,28 +2,27 @@
 Source: https://github.com/Textualize/rich/issues/189
 
 """
-
 import asyncio
 import sys
 
-from rich.progress import track
+from rich.progress import Progress
 
 
 async def sleeper(val):
     await asyncio.sleep(5)
-    # print(f'Processing {val}')
     return val
 
 
 async def scheduler():
     tasks = [sleeper(i) for i in range(100)]
     total_tasks = len(tasks)
-    for task in track(
-        asyncio.as_completed(tasks),
-        description="Processing...",
-        total=total_tasks,
-    ):
-        await task
+
+    with Progress() as progress:
+        task = progress.add_task("Processing...", total=total_tasks)
+
+        for future in asyncio.as_completed(tasks):
+            await future
+            progress.update(task, advance=1)
 
 
 def get_event_loop():
@@ -47,5 +46,4 @@ def run_coroutine(coro):
 
 
 if __name__ == "__main__":
-    """This DOES NOT work"""
     run_coroutine(scheduler())
