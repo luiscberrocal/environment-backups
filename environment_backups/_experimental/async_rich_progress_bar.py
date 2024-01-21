@@ -1,3 +1,8 @@
+"""
+Source: https://github.com/Textualize/rich/issues/189
+
+"""
+
 import asyncio
 import sys
 
@@ -6,7 +11,7 @@ from rich.progress import track
 
 async def sleeper(val):
     await asyncio.sleep(5)
-    print(f'Processing {val}')
+    # print(f'Processing {val}')
     return val
 
 
