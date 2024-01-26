@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List
 
+
 def list_all_projects(projects_folder: Path) -> List[str]:
     """Lists all project directories within a specified folder.
 
@@ -41,4 +42,3 @@ def get_projects_envs(project_folder: Path, environment_folders: List[str]) -> D
             if envs.exists():
                 folder_dict[path.name] = {'envs': envs}
     return folder_dict
-
