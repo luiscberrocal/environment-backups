@@ -48,12 +48,13 @@ async def backup(environment: str, projects_folder: Path, backup_folder: Path, u
         click.secho(f'Saved {len(zip_list)} zip environments to {b_folder}. Took {elapsed:.2f} seconds.', fg='green')
 
         if env_cfg.get('google_drive_folder_id'):
+            # TODO add elapsed to upload
             spinner = Spinner('dots3', text=Text('Uploading to Google Drive'))
             with Live(spinner):
                 secrets_file = Path(env_cfg.get('google_authentication_file'))
                 gdrive = GDrive(secrets_file=secrets_file)
                 gdrive.upload_folder(b_folder, env_cfg['google_drive_folder_id'])
-                click.secho(f'Uploaded {b_folder} to google drive')
+            click.secho(f'Uploaded {b_folder} to google drive', fg='green')
     else:
         legacy_backup(backup_folder, projects_folder)
 

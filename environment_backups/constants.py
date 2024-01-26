@@ -1,7 +1,8 @@
 from environment_backups import CONFIGURATION_MANAGER
 
 DEFAULT_ENV_FOLDER = '.envs'
-DEFAULT_DATE_FORMAT = '%Y%m%d_%H'
+# FIXME This does not work.
+DEFAULT_DATE_FORMAT = '%Y%m%d_%H%M'
 
 LOG_FILE = CONFIGURATION_MANAGER.logs_folder / f'{CONFIGURATION_MANAGER.APP_NAME}.log'
 # TODO add line number to formatter
@@ -25,12 +26,12 @@ LOGGING = {
         },
     },
     "loggers": {
-        "root": {
-            "level": "DEBUG",
-            "handlers": [
-                "console",
-            ],
-        },
+         # "root": {
+         #     "level": "DEBUG",
+         #     "handlers": [
+         #         "console",
+         #     ],
+         # },
         'environment_backups': {"level": "DEBUG", "handlers": ['console', 'file'], "propagate": False},
     },
 }

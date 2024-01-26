@@ -20,7 +20,7 @@ async def backup_envs(
     environment_folders: List[str],
     computer_name: str = None,
     password: str = None,
-    date_format='%Y%m%d_%H',
+    date_format='%Y%m%d_%H', # FIXME use environment_backups/constants.py:5
     use_async: bool = False,
 ) -> Tuple[List[Path], Path]:
     project_envs_dict = get_projects_envs(projects_folder, environment_folders)
@@ -33,7 +33,7 @@ async def backup_envs(
 
     zip_list = []
     if use_async:
-        # FIXME Do async
+        # FIXME Only use async
         zipped_files = await zip_folders_with_pwd_async(
             source_folder=projects_folder, backup_folder=b_folder, environment_folders=['.envs'], password=password
         )
